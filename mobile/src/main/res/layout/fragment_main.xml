@@ -4,10 +4,15 @@
     android:layout_height="match_parent"
     tools:context="se.mah.ad0025.keepmesafe.MainFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <Button
+        android:id="@+id/btn_help"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="MainFragment" />
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginBottom="60dp"
+        android:text="HELP!"
+        android:textSize="60dp"/>
 
 </FrameLayout>
