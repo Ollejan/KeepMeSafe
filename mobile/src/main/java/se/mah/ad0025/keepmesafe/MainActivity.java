@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_Add) {
-            fm.beginTransaction().replace(R.id.container, new SettingsFragment()).commit();
+            fm.beginTransaction().replace(R.id.container, new AddContactFragment()).commit();
         } else if (id == R.id.nav_Delete) {
 
         } else if (id == R.id.nav_Edit) {
