@@ -6,7 +6,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="action_settings">Settings</string>
     <string name="Title">Keep Me Safe</string>
-    <string name="schoolSite">mah.se</string>
-    <string name="iconDesc">Icon of application</string>  
-    
+    <string name="iconDesc">Icon of application</string>
+    <string name="Authors"><![CDATA[by Sebastian Aspegren & Jonas Dahlström]]></string>
+
 </resources>
