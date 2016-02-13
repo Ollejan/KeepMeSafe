@@ -30,6 +30,7 @@ public class MainFragment extends Fragment {
         btn_help.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //ToDo Hämta koordinater och skicka iväg SMS.
                 Snackbar.make(v, "Messages have been sent", Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
         });

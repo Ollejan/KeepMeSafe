@@ -1,13 +1,51 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddContactFragment">
+    tools:context=".AddContactFragment"
+    android:orientation="vertical">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="AddContactFragment" />
+        android:layout_height="wrap_content"
+        android:text="You can import contacts from your phone by pressing this button and picking a contact you'd like to add." />
 
-</FrameLayout>
+    <Button
+        android:id="@+id/btn_openContacts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Import from contacts"
+        android:layout_marginBottom="30dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Contact name:" />
+
+    <EditText
+        android:id="@+id/et_contactName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:hint="Name"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Contact number:" />
+
+    <EditText
+        android:id="@+id/et_contactNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:inputType="phone"
+        android:hint="Number"/>
+
+    <Button
+        android:id="@+id/btn_addContact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add contact"/>
+
+</LinearLayout>
