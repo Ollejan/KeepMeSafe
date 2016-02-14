@@ -6,10 +6,6 @@ import android.net.Uri;
 import android.provider.ContactsContract;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentTransaction;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -18,7 +14,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import se.mah.ad0025.keepmesafe.help.HelpActivity;
 
@@ -32,22 +27,31 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
+        if (findViewById(R.id.container) != null) {
+//Här läggs det som alltid ska ske.
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                    this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+            drawer.setDrawerListener(toggle);
+            toggle.syncState();
+            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+            navigationView.setNavigationItemSelectedListener(this);
+            addContactFragment = new AddContactFragment();
+            if (savedInstanceState != null) {
+//Här läggs det som bara ska ske vid rotation men inte första gången. Tex hämta värden via savedInstanceState.
 
-        addContactFragment = new AddContactFragment();
+                return;
+            }
+//Här läggs det som ska ske första gången men inte efter rotation.
 
-        FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction().replace(R.id.container, new MainFragment()).commit();
+            FragmentManager fm = getSupportFragmentManager();
+            fm.beginTransaction().replace(R.id.container, new MainFragment()).commit();
+        }
+
     }
 
     @Override
@@ -126,7 +130,7 @@ public class MainActivity extends AppCompatActivity
                 // Get the URI that points to the selected contact
                 Uri uri = data.getData();
 
-                String[] projection = new String[] {ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                String[] projection = new String[]{ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
                         ContactsContract.CommonDataKinds.Phone.NUMBER};
 
                 Cursor people = getContentResolver().query(uri, projection, null, null, null);
