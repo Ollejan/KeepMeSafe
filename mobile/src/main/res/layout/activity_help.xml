@@ -1,0 +1,49 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <include
+        android:id="@+id/help1Layout"
+        layout="@layout/help1"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/help2Layout"
+        layout="@layout/help2"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/help3Layout"
+        layout="@layout/help3"
+        android:visibility="gone" />
+
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rbHelp1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true" />
+
+        <RadioButton
+            android:id="@+id/rbHelp2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <RadioButton
+            android:id="@+id/rbHelp3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RadioGroup>
+</FrameLayout>
