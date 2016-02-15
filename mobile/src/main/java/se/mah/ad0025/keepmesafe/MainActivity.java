@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -62,9 +63,13 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
+        FragmentManager fm = getSupportFragmentManager();
+        Fragment currentFragment = fm.findFragmentById(R.id.container);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+        } else if (!(currentFragment instanceof MainFragment)) {
+            fm.beginTransaction().replace(R.id.container, new MainFragment()).commit();
         } else {
             super.onBackPressed();
         }
