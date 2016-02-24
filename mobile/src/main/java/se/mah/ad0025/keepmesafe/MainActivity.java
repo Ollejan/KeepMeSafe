@@ -22,19 +22,33 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.ArrayList;
+
 import se.mah.ad0025.keepmesafe.help.HelpActivity;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, AddContactFragment.OnImportClickedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, AddContactFragment.OnImportClickedListener, AddContactFragment.OnAddContactClickedListener,
+        ManageContactsFragment.OnManageAddContactClickedListener {
 
-    static final int PICK_CONTACT = 123;
+    private static final int PICK_CONTACT = 123;
     private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 64;
-    AddContactFragment addContactFragment;
+    private NavigationView navigationView;
+    private FragmentManager fm;
+    private ArrayList<Contact> contacts = new ArrayList<>();    //Används för att lagra alla kontakter man har sparat i appen.
+    private DBController dbController;
+    private AddContactFragment addContactFragment;
+    private ManageContactsFragment manageContactsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        dbController = new DBController(this);
+        manageContactsFragment = new ManageContactsFragment();
+
+
+        //---------- DETTA KAN VI NOG ÄNDRA OM EN DEL OM VI TAR BORT LANDSKAPSLÄGE -----------------
 
         if (findViewById(R.id.container) != null) {
 //Här läggs det som alltid ska ske.
@@ -46,30 +60,39 @@ public class MainActivity extends AppCompatActivity
                     this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
             drawer.setDrawerListener(toggle);
             toggle.syncState();
-            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+            navigationView = (NavigationView) findViewById(R.id.nav_view); //Drawer-menyn. Används bl.a. för att avmarkera i menyn vid bakåtklick.
             navigationView.setNavigationItemSelectedListener(this);
             if (savedInstanceState != null) {
 //Här läggs det som bara ska ske vid rotation men inte första gången. Tex hämta värden via savedInstanceState.
-                FragmentManager fm = getSupportFragmentManager();
                 addContactFragment = (AddContactFragment) fm.findFragmentByTag("contacts");
+                manageContactsFragment = (ManageContactsFragment)fm.findFragmentByTag("manage");
                 return;
             }
 //Här läggs det som ska ske första gången men inte efter rotation.
-            FragmentManager fm = getSupportFragmentManager();
+            fm = getSupportFragmentManager();
             fm.beginTransaction().replace(R.id.container, new MainFragment()).commit();
         }
 
+        //------------------------------------------------------------------------------------------
+
+
+        manageContactsFragment.setAdapter(new ContactListAdapter(this, contacts));
+        getAllContactsFromDB();
     }
 
     @Override
     public void onBackPressed() {
-        FragmentManager fm = getSupportFragmentManager();
         Fragment currentFragment = fm.findFragmentById(R.id.container);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else if (!(currentFragment instanceof MainFragment)) {
             fm.beginTransaction().replace(R.id.container, new MainFragment()).commit();
+            //Följande rader avmarkerar samtliga meny-items vid bakåtklick.
+            navigationView.getMenu().getItem(0).setChecked(false);
+            navigationView.getMenu().getItem(1).setChecked(false);
+            navigationView.getMenu().getItem(2).setChecked(false);
+            navigationView.getMenu().getItem(3).setChecked(false);
         } else {
             super.onBackPressed();
         }
@@ -100,19 +123,13 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-
-        FragmentManager fm = getSupportFragmentManager();
-
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_Add) {
-
-            if(addContactFragment == null)
-            addContactFragment = new AddContactFragment();
-            fm.beginTransaction().replace(R.id.container, addContactFragment,"contacts").commit();
-        } else if (id == R.id.nav_Delete) {
-
+        if (id == R.id.nav_Manage) {
+            if(manageContactsFragment == null)
+                manageContactsFragment = new ManageContactsFragment();
+            fm.beginTransaction().replace(R.id.container, manageContactsFragment, "manage").commit();
         } else if (id == R.id.nav_Edit) {
 
         } else if (id == R.id.nav_What) {
@@ -239,4 +256,53 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
+
+    /**
+     * Metod som körs när användaren klickar på knappen som tar en till sidan där man lägger till
+     * en ny kontakt.
+     */
+    @Override
+    public void onManageAddContactBtnClicked() {
+        if(addContactFragment == null)
+            addContactFragment = new AddContactFragment();
+        fm.beginTransaction().replace(R.id.container, addContactFragment, "contacts").commit();
+    }
+
+    /**
+     * Metod som körs när användaren klickar på knappen som lägger till ny kontakt.
+     * Lägger till kontakten i databasen och uppdaterar ArrayListan med hjälp av metoden
+     * "getAllContactsFromDB".
+     * @param name
+     *          Namnet på kontakten.
+     * @param number
+     *          Numret till kontakten.
+     */
+    public void onAddContactBtnClicked(String name, String number) {
+        dbController.open();
+        dbController.addContact(name, number);
+        dbController.close();
+        getAllContactsFromDB();
+        fm.beginTransaction().replace(R.id.container, manageContactsFragment).commit();
+    }
+
+    /**
+     * Hämtar alla kontakter från databasen och lagrar i ArrayListan "contacts".
+     * Används vid programstart och när användaren lagt till en ny kontakt.
+     */
+    private void getAllContactsFromDB() {
+        Contact newContact;
+        contacts.clear();
+        dbController.open();
+        Cursor c = dbController.getContacts();
+        if( c.moveToFirst() ){
+            do{
+                newContact = new Contact(c.getString(1), c.getString(2));
+                newContact.setID(c.getInt(0));
+                contacts.add(newContact);
+            }while(c.moveToNext());
+        }
+        c.close();
+        dbController.close();
+    }
+
 }

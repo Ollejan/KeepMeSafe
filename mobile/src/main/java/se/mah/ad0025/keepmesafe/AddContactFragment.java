@@ -16,11 +16,16 @@ import android.widget.EditText;
  * A simple {@link Fragment} subclass.
  */
 public class AddContactFragment extends Fragment {
-    OnImportClickedListener mCallback;
-    EditText et_contactName, et_contactNumber;
+    private OnImportClickedListener importBtnClicked;
+    private OnAddContactClickedListener addContactBtnClicked;
+    private EditText et_contactName, et_contactNumber;
 
     public interface OnImportClickedListener {
         void onImportBtnClicked();
+    }
+
+    public interface OnAddContactClickedListener {
+        void onAddContactBtnClicked(String name, String number);
     }
 
     @Override
@@ -31,10 +36,11 @@ public class AddContactFragment extends Fragment {
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
         try {
-            mCallback = (OnImportClickedListener) activity;
+            importBtnClicked = (OnImportClickedListener) activity;
+            addContactBtnClicked = (OnAddContactClickedListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnImportClickedListener");
+                    + " must implement OnImportClickedListener and OnAddContactClickedListener");
         }
 
     }
@@ -52,13 +58,22 @@ public class AddContactFragment extends Fragment {
         et_contactName = (EditText)view.findViewById(R.id.et_contactName);
         et_contactNumber = (EditText)view.findViewById(R.id.et_contactNumber);
         Button btn_openContacts = (Button)view.findViewById(R.id.btn_openContacts);
+        Button btn_addContact = (Button)view.findViewById(R.id.btn_addContact);
 
         btn_openContacts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCallback.onImportBtnClicked();
+                importBtnClicked.onImportBtnClicked();
             }
         });
+
+        btn_addContact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addContactBtnClicked.onAddContactBtnClicked(et_contactName.getText().toString(), et_contactNumber.getText().toString());
+            }
+        });
+
         return view;
     }
 

@@ -3,28 +3,21 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_Add"
-            android:icon="@android:drawable/ic_menu_add"
-            android:title="Add SMS contact" />
-        <item
-            android:id="@+id/nav_Delete"
-            android:icon="@android:drawable/ic_menu_delete"
-            android:title="Delete SMS contact" />
+            android:id="@+id/nav_Manage"
+            android:icon="@android:drawable/ic_menu_manage"
+            android:title="Manage Contacts" />
         <item
             android:id="@+id/nav_Edit"
             android:icon="@android:drawable/ic_menu_edit"
-            android:title="Edit SMS" />
-
-    <item android:title="Help">
-            <item
-                android:id="@+id/nav_What"
-                android:icon="@android:drawable/ic_dialog_info"
-                android:title="What is this?" />
-            <item
-                android:id="@+id/nav_How"
-                android:icon="@android:drawable/ic_menu_help"
-                android:title="How do I use this?" />
-    </item>
+            android:title="Edit Message" />
+        <item
+            android:id="@+id/nav_What"
+            android:icon="@android:drawable/ic_dialog_info"
+            android:title="What is this?" />
+        <item
+            android:id="@+id/nav_How"
+            android:icon="@android:drawable/ic_menu_help"
+            android:title="How do I use this?" />
     </group>
 
 </menu>
