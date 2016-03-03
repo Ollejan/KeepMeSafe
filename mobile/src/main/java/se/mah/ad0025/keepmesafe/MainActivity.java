@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity
     private FragmentManager fm;
     private ArrayList<Contact> contacts = new ArrayList<>();    //Används för att lagra alla kontakter man har sparat i appen.
     private DBController dbController;
+    private MainFragment mainFragment;
     private AddContactFragment addContactFragment;
     private ManageContactsFragment manageContactsFragment;
 
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity
 
         dbController = new DBController(this);
         manageContactsFragment = new ManageContactsFragment();
+        mainFragment = new MainFragment();
 
 
         //---------- DETTA KAN VI NOG ÄNDRA OM EN DEL OM VI TAR BORT LANDSKAPSLÄGE -----------------
@@ -70,7 +72,7 @@ public class MainActivity extends AppCompatActivity
             }
 //Här läggs det som ska ske första gången men inte efter rotation.
             fm = getSupportFragmentManager();
-            fm.beginTransaction().replace(R.id.container, new MainFragment()).commit();
+            fm.beginTransaction().replace(R.id.container, mainFragment).commit();
         }
 
         //------------------------------------------------------------------------------------------
@@ -86,8 +88,10 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+        } else if (fm.getBackStackEntryCount() > 0) {
+            fm.popBackStack();
         } else if (!(currentFragment instanceof MainFragment)) {
-            fm.beginTransaction().replace(R.id.container, new MainFragment()).commit();
+            fm.beginTransaction().replace(R.id.container, mainFragment).commit();
             //Följande rader avmarkerar samtliga meny-items vid bakåtklick.
             navigationView.getMenu().getItem(0).setChecked(false);
             navigationView.getMenu().getItem(1).setChecked(false);
@@ -98,31 +102,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+        clearBackStack();
+
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -139,9 +123,20 @@ public class MainActivity extends AppCompatActivity
 
         }
 
+        item.setChecked(true);  //Markerar vald item i drawern.
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    /**
+     * Metod som tömmer backstacken. Sker när användaren klickar på något i drawern.
+     */
+    private void clearBackStack() {
+        if (fm.getBackStackEntryCount() > 0) {
+            FragmentManager.BackStackEntry first = fm.getBackStackEntryAt(0);
+            fm.popBackStack(first.getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
     }
 
     @Override
@@ -265,7 +260,7 @@ public class MainActivity extends AppCompatActivity
     public void onManageAddContactBtnClicked() {
         if(addContactFragment == null)
             addContactFragment = new AddContactFragment();
-        fm.beginTransaction().replace(R.id.container, addContactFragment, "contacts").commit();
+        fm.beginTransaction().replace(R.id.container, addContactFragment, "contacts").addToBackStack(null).commit();
     }
 
     /**
@@ -282,7 +277,7 @@ public class MainActivity extends AppCompatActivity
         dbController.addContact(name, number);
         dbController.close();
         getAllContactsFromDB();
-        fm.beginTransaction().replace(R.id.container, manageContactsFragment).commit();
+        fm.popBackStack();
     }
 
     /**

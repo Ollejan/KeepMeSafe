@@ -4,6 +4,7 @@ package se.mah.ad0025.keepmesafe;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,7 +71,10 @@ public class AddContactFragment extends Fragment {
         btn_addContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addContactBtnClicked.onAddContactBtnClicked(et_contactName.getText().toString(), et_contactNumber.getText().toString());
+                if(et_contactName.getText().toString().trim().length() == 0 || et_contactNumber.getText().toString().trim().length() == 0)
+                    Snackbar.make(v, "Please enter name and number", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                else
+                    addContactBtnClicked.onAddContactBtnClicked(et_contactName.getText().toString(), et_contactNumber.getText().toString());
             }
         });
 
