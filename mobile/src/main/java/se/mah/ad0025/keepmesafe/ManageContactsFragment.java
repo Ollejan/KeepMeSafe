@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -22,11 +23,16 @@ import se.mah.ad0025.keepmesafe.R;
  */
 public class ManageContactsFragment extends Fragment {
     private OnManageAddContactClickedListener manageAddContactBtnClicked;   //Används för att mainactivity ska veta när klick sker.
+    private OnManageListItemClickedListener manageListItemClicked;
     private ListView lvContacts;
     private ContactListAdapter adapter;
 
     public interface OnManageAddContactClickedListener {
         void onManageAddContactBtnClicked();
+    }
+
+    public interface OnManageListItemClickedListener {
+        void onManageListItemClicked(int position);
     }
 
     @Override
@@ -38,9 +44,10 @@ public class ManageContactsFragment extends Fragment {
         // the callback interface. If not, it throws an exception
         try {
             manageAddContactBtnClicked = (OnManageAddContactClickedListener) activity;
+            manageListItemClicked = (OnManageListItemClickedListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnManageAddContactClickedListener");
+                    + " must implement OnManageAddContactClickedListener and OnManageListItemClickedListener");
         }
 
     }
@@ -62,6 +69,12 @@ public class ManageContactsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 manageAddContactBtnClicked.onManageAddContactBtnClicked();
+            }
+        });
+        lvContacts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                manageListItemClicked.onManageListItemClicked(position);
             }
         });
         return view;

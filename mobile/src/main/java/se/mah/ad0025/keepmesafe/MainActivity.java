@@ -28,7 +28,7 @@ import se.mah.ad0025.keepmesafe.help.HelpActivity;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, AddContactFragment.OnImportClickedListener, AddContactFragment.OnAddContactClickedListener,
-        ManageContactsFragment.OnManageAddContactClickedListener {
+        ManageContactsFragment.OnManageAddContactClickedListener, ManageContactsFragment.OnManageListItemClickedListener {
 
     private static final int PICK_CONTACT = 123;
     private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 64;
@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity
     private MainFragment mainFragment;
     private AddContactFragment addContactFragment;
     private ManageContactsFragment manageContactsFragment;
+    private ContactDetailsFragment contactDetailsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +47,9 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         dbController = new DBController(this);
-        manageContactsFragment = new ManageContactsFragment();
         mainFragment = new MainFragment();
+        manageContactsFragment = new ManageContactsFragment();
+        contactDetailsFragment = new ContactDetailsFragment();
 
 
         //---------- DETTA KAN VI NOG ÄNDRA OM EN DEL OM VI TAR BORT LANDSKAPSLÄGE -----------------
@@ -300,4 +302,10 @@ public class MainActivity extends AppCompatActivity
         dbController.close();
     }
 
+    @Override
+    public void onManageListItemClicked(int position) {
+        fm.beginTransaction().replace(R.id.container, contactDetailsFragment).addToBackStack(null).commit();
+        //ToDo Denna raden kraschar appen eftersom den försöker sätta EditText när den är null. Fixa!
+        //contactDetailsFragment.setNameAndNumber(contacts.get(position).getName(), contacts.get(position).getNumber());
+    }
 }
