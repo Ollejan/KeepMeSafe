@@ -1,6 +1,8 @@
 package se.mah.ad0025.keepmesafe;
 
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,8 +16,36 @@ import android.widget.EditText;
  * A simple {@link Fragment} subclass.
  */
 public class ContactDetailsFragment extends Fragment {
+    private OnDeleteContactClickedListener deleteContactBtnClicked;
+    private OnUpdateContactClickedListener updateContactBtnClicked;
     private EditText et_detailsContactName, et_detailsContactNumber;
-    private Button btn_deleteContact, btn_updateContact;
+    private String name, number;
+    private int ID;
+
+    public interface OnDeleteContactClickedListener {
+        void onDeleteContactClicked(int ID);
+    }
+
+    public interface OnUpdateContactClickedListener {
+        void onUpdateContactClicked(int ID, String name, String number);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        Activity activity = context instanceof Activity ? (Activity) context : null;
+
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            deleteContactBtnClicked = (OnDeleteContactClickedListener) activity;
+            updateContactBtnClicked = (OnUpdateContactClickedListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnDeleteContactClickedListener and OnUpdateContactClickedListener");
+        }
+
+    }
 
     public ContactDetailsFragment() {
         // Required empty public constructor
@@ -29,14 +59,48 @@ public class ContactDetailsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_contact_details, container, false);
         et_detailsContactName = (EditText)view.findViewById(R.id.et_detailsContactName);
         et_detailsContactNumber = (EditText)view.findViewById(R.id.et_detailsContactNumber);
-        btn_deleteContact = (Button)view.findViewById(R.id.btn_deleteContact);
-        btn_updateContact = (Button)view.findViewById(R.id.btn_updateContact);
+        Button btn_deleteContact = (Button)view.findViewById(R.id.btn_deleteContact);
+        Button btn_updateContact = (Button)view.findViewById(R.id.btn_updateContact);
+
+        btn_deleteContact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteContactBtnClicked.onDeleteContactClicked(ID);
+            }
+        });
+
+        btn_updateContact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                name = et_detailsContactName.getText().toString();
+                number = et_detailsContactNumber.getText().toString();
+                updateContactBtnClicked.onUpdateContactClicked(ID, name, number);
+            }
+        });
+
         return view;
     }
 
-    public void setNameAndNumber(String name, String number) {
+    @Override
+    public void onResume() {
         et_detailsContactName.setText(name);
         et_detailsContactNumber.setText(number);
+        super.onResume();
+    }
+
+    /**
+     * Metod som uppdaterar instansvariablerna.
+     * @param name
+     *          Namnet på kontakten.
+     * @param number
+     *          Numret till kontakten.
+     * @param ID
+     *          Kontaktens ID.
+     */
+    public void setNameAndNumber(String name, String number, int ID) {
+        this.name = name;
+        this.number = number;
+        this.ID = ID;
     }
 
 }

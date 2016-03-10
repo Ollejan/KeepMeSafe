@@ -79,7 +79,24 @@ public class DBController extends SQLiteOpenHelper {
      *              the ID of the contact we want to delete.
      */
     public void deleteContact(int ID) {
-        database.delete("contacts", "_id='"+ID+"'", null);
+        database.delete("contacts", "_id='" + ID + "'", null);
+    }
+
+    /**
+     * A method used to update a contact in the database.
+     * @param ID
+     *              the ID of the contact we want to update.
+     * @param name
+     *              the new name of the contact.
+     * @param number
+     *              the new number of the contact.
+     */
+    public void updateContact(int ID, String name, String number) {
+        ContentValues values = new ContentValues();
+        values.put("name", name);
+        values.put("number", number);
+
+        database.update("contacts", values, "_id="+ID, null);
     }
 
     /**

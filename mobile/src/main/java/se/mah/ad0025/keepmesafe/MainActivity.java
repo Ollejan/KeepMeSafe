@@ -28,7 +28,8 @@ import se.mah.ad0025.keepmesafe.help.HelpActivity;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, AddContactFragment.OnImportClickedListener, AddContactFragment.OnAddContactClickedListener,
-        ManageContactsFragment.OnManageAddContactClickedListener, ManageContactsFragment.OnManageListItemClickedListener {
+        ManageContactsFragment.OnManageAddContactClickedListener, ManageContactsFragment.OnManageListItemClickedListener, ContactDetailsFragment.OnDeleteContactClickedListener,
+        ContactDetailsFragment.OnUpdateContactClickedListener {
 
     private static final int PICK_CONTACT = 123;
     private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 64;
@@ -305,7 +306,38 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onManageListItemClicked(int position) {
         fm.beginTransaction().replace(R.id.container, contactDetailsFragment).addToBackStack(null).commit();
-        //ToDo Denna raden kraschar appen eftersom den försöker sätta EditText när den är null. Fixa!
-        //contactDetailsFragment.setNameAndNumber(contacts.get(position).getName(), contacts.get(position).getNumber());
+        contactDetailsFragment.setNameAndNumber(contacts.get(position).getName(), contacts.get(position).getNumber(), contacts.get(position).getID());
+    }
+
+    /**
+     * Metod som raderar en kontakt från databasen och uppdaterar kontaktlistan.
+     * @param ID
+     *          Unikt ID till den kontakt som ska raderas från databasen.
+     */
+    @Override
+    public void onDeleteContactClicked(int ID) {
+        dbController.open();
+        dbController.deleteContact(ID);
+        dbController.close();
+        getAllContactsFromDB();
+        fm.popBackStack();
+    }
+
+    /**
+     * Metod som uppdaterar en kontakt i databasen med nytt namn/nummer.
+     * @param ID
+     *          Unikt ID till den kontakt som ska uppdateras.
+     * @param name
+     *          Det namn det ska uppdateras till.
+     * @param number
+     *          Det nummer det ska uppdateras till.
+     */
+    @Override
+    public void onUpdateContactClicked(int ID, String name, String number) {
+        dbController.open();
+        dbController.updateContact(ID, name, number);
+        dbController.close();
+        getAllContactsFromDB();
+        fm.popBackStack();
     }
 }
