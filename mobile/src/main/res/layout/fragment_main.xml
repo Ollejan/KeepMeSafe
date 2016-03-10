@@ -13,6 +13,6 @@
         android:layout_marginTop="60dp"
         android:layout_marginBottom="60dp"
         android:text="HELP!"
-        android:textSize="60dp"/>
+        android:textSize="60sp"/>
 
 </FrameLayout>

@@ -3,6 +3,7 @@ package se.mah.ad0025.keepmesafe;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -19,7 +20,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 
 import java.util.ArrayList;
@@ -29,28 +29,33 @@ import se.mah.ad0025.keepmesafe.help.HelpActivity;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, AddContactFragment.OnImportClickedListener, AddContactFragment.OnAddContactClickedListener,
         ManageContactsFragment.OnManageAddContactClickedListener, ManageContactsFragment.OnManageListItemClickedListener, ContactDetailsFragment.OnDeleteContactClickedListener,
-        ContactDetailsFragment.OnUpdateContactClickedListener {
+        ContactDetailsFragment.OnUpdateContactClickedListener, EditMessageFragment.OnSaveMessageClickedListener {
 
     private static final int PICK_CONTACT = 123;
     private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 64;
     private NavigationView navigationView;
     private FragmentManager fm;
+    private SharedPreferences prefs;
     private ArrayList<Contact> contacts = new ArrayList<>();    //Används för att lagra alla kontakter man har sparat i appen.
     private DBController dbController;
     private MainFragment mainFragment;
     private AddContactFragment addContactFragment;
     private ManageContactsFragment manageContactsFragment;
     private ContactDetailsFragment contactDetailsFragment;
+    private EditMessageFragment editMessageFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        prefs = getSharedPreferences("KeepMeSafePrefs", MODE_PRIVATE);
+
         dbController = new DBController(this);
         mainFragment = new MainFragment();
         manageContactsFragment = new ManageContactsFragment();
         contactDetailsFragment = new ContactDetailsFragment();
+        editMessageFragment = new EditMessageFragment();
 
 
         //---------- DETTA KAN VI NOG ÄNDRA OM EN DEL OM VI TAR BORT LANDSKAPSLÄGE -----------------
@@ -118,7 +123,10 @@ public class MainActivity extends AppCompatActivity
                 manageContactsFragment = new ManageContactsFragment();
             fm.beginTransaction().replace(R.id.container, manageContactsFragment, "manage").commit();
         } else if (id == R.id.nav_Edit) {
-
+            if(editMessageFragment == null)
+                editMessageFragment = new EditMessageFragment();
+            fm.beginTransaction().replace(R.id.container, editMessageFragment).commit();
+            editMessageFragment.setMessage(prefs.getString("textMessage", ""));
         } else if (id == R.id.nav_What) {
             Intent intent = new Intent(this, HelpActivity.class);
             startActivity(intent);
@@ -250,6 +258,7 @@ public class MainActivity extends AppCompatActivity
 
                 String name = people.getString(indexName);
                 String number = people.getString(indexNumber);
+                number = number.replace("-", "");
                 addContactFragment.setNameAndNumber(name, number);
             }
         }
@@ -339,5 +348,20 @@ public class MainActivity extends AppCompatActivity
         dbController.close();
         getAllContactsFromDB();
         fm.popBackStack();
+    }
+
+    /**
+     * Metod som sparar användarens textmeddelande i SharedPreferences.
+     * @param message
+     *          Textmeddelandet som användaren vill spara.
+     */
+    @Override
+    public void onSaveMessageBtnClicked(String message) {
+        prefs.edit().putString("textMessage", message).apply();
+        fm.beginTransaction().replace(R.id.container, mainFragment).commit();
+        navigationView.getMenu().getItem(0).setChecked(false);
+        navigationView.getMenu().getItem(1).setChecked(false);
+        navigationView.getMenu().getItem(2).setChecked(false);
+        navigationView.getMenu().getItem(3).setChecked(false);
     }
 }
