@@ -71,10 +71,11 @@ public class AddContactFragment extends Fragment {
         btn_addContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(et_contactName.getText().toString().trim().length() == 0 || et_contactNumber.getText().toString().trim().length() == 0)
+                if(et_contactName.getText().toString().trim().length() == 0 || et_contactNumber.getText().toString().trim().length() == 0) {
                     Snackbar.make(v, "Please enter name and number", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                else
-                    addContactBtnClicked.onAddContactBtnClicked(et_contactName.getText().toString(), et_contactNumber.getText().toString());
+                } else {
+                    addContactBtnClicked.onAddContactBtnClicked(et_contactName.getText().toString(), et_contactNumber.getText().toString().trim());
+                }
             }
         });
 

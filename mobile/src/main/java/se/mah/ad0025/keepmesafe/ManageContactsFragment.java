@@ -9,13 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
-import java.util.ArrayList;
-
-import se.mah.ad0025.keepmesafe.R;
 
 /**
  * Fragment som visar en lista på kontakter som användaren lagt till samt en knapp för att lägga
@@ -24,8 +21,8 @@ import se.mah.ad0025.keepmesafe.R;
 public class ManageContactsFragment extends Fragment {
     private OnManageAddContactClickedListener manageAddContactBtnClicked;   //Används för att mainactivity ska veta när klick sker.
     private OnManageListItemClickedListener manageListItemClicked;
-    private ListView lvContacts;
     private ContactListAdapter adapter;
+    private TextView tvListInfo;
 
     public interface OnManageAddContactClickedListener {
         void onManageAddContactBtnClicked();
@@ -62,22 +59,35 @@ public class ManageContactsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_manage_contacts, container, false);
-        lvContacts = (ListView)view.findViewById(R.id.lvContacts);
+        ListView lvContacts = (ListView)view.findViewById(R.id.lvContacts);
+        tvListInfo = (TextView)view.findViewById(R.id.tvListInfo);
         lvContacts.setAdapter(adapter);
         Button btnManageAddContact = (Button)view.findViewById(R.id.btn_manageAddContact);
+
         btnManageAddContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 manageAddContactBtnClicked.onManageAddContactBtnClicked();
             }
         });
+
         lvContacts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 manageListItemClicked.onManageListItemClicked(position);
             }
         });
+
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        if(adapter.isEmpty())
+            tvListInfo.setText("List is empty, please add contacts...");
+        else
+            tvListInfo.setText("Contacts:");
+        super.onResume();
     }
 
     /**

@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -225,7 +226,7 @@ public class MainActivity extends AppCompatActivity
         public void onClick(DialogInterface dialog, int which) {
             switch (which){
                 case DialogInterface.BUTTON_POSITIVE:
-                  requestPermission();
+                    requestPermission();
                     break;
 
                 case DialogInterface.BUTTON_NEGATIVE:
@@ -285,11 +286,19 @@ public class MainActivity extends AppCompatActivity
      *          Numret till kontakten.
      */
     public void onAddContactBtnClicked(String name, String number) {
+        for(int i = 0; i < contacts.size(); i++) {
+            if(contacts.get(i).getNumber().equals(number)) {
+                Snackbar.make(findViewById(R.id.container), "Contact already added", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                return;
+            }
+        }
+
         dbController.open();
         dbController.addContact(name, number);
         dbController.close();
         getAllContactsFromDB();
         fm.popBackStack();
+        Snackbar.make(findViewById(R.id.container), "Contact added successfully", Snackbar.LENGTH_LONG).setAction("Action", null).show();
     }
 
     /**
@@ -325,11 +334,38 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onDeleteContactClicked(int ID) {
-        dbController.open();
-        dbController.deleteContact(ID);
-        dbController.close();
-        getAllContactsFromDB();
-        fm.popBackStack();
+        final int finalID = ID;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle("Confirm");
+        builder.setMessage("Are you sure?");
+
+        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+                dbController.open();
+                dbController.deleteContact(finalID);
+                dbController.close();
+                getAllContactsFromDB();
+                fm.popBackStack();
+                dialog.dismiss();
+                Snackbar.make(findViewById(R.id.container), "Contact deleted", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+            }
+
+        });
+
+        builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Do nothing
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     /**
@@ -343,11 +379,16 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onUpdateContactClicked(int ID, String name, String number) {
-        dbController.open();
-        dbController.updateContact(ID, name, number);
-        dbController.close();
-        getAllContactsFromDB();
-        fm.popBackStack();
+        if(name.trim().length() == 0 || number.trim().length() == 0) {
+            Snackbar.make(findViewById(R.id.container), "Please enter name and number", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+        } else {
+            dbController.open();
+            dbController.updateContact(ID, name, number);
+            dbController.close();
+            getAllContactsFromDB();
+            fm.popBackStack();
+            Snackbar.make(findViewById(R.id.container), "Contact saved", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+        }
     }
 
     /**
