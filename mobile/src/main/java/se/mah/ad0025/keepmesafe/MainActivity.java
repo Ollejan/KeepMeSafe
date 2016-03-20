@@ -261,6 +261,8 @@ public class MainActivity extends AppCompatActivity
                 String number = people.getString(indexNumber);
                 number = number.replace("-", "");
                 addContactFragment.setNameAndNumber(name, number);
+
+                people.close();
             }
         }
     }
