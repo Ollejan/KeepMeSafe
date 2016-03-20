@@ -20,6 +20,7 @@ public class AddContactFragment extends Fragment {
     private OnImportClickedListener importBtnClicked;
     private OnAddContactClickedListener addContactBtnClicked;
     private EditText et_contactName, et_contactNumber;
+    private String name, number;
 
     public interface OnImportClickedListener {
         void onImportBtnClicked();
@@ -71,10 +72,10 @@ public class AddContactFragment extends Fragment {
         btn_addContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(et_contactName.getText().toString().trim().length() == 0 || et_contactNumber.getText().toString().trim().length() == 0) {
+                if (et_contactName.getText().toString().trim().length() == 0 || et_contactNumber.getText().toString().trim().length() == 0) {
                     Snackbar.make(v, "Please enter name and number", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 } else {
-                    addContactBtnClicked.onAddContactBtnClicked(et_contactName.getText().toString(), et_contactNumber.getText().toString().trim());
+                    addContactBtnClicked.onAddContactBtnClicked(et_contactName.getText().toString().trim(), et_contactNumber.getText().toString().replace(" ", "").replace("-", ""));
                 }
             }
         });
@@ -82,8 +83,15 @@ public class AddContactFragment extends Fragment {
         return view;
     }
 
-    public void setNameAndNumber(String name, String number) {
+    @Override
+    public void onResume() {
         et_contactName.setText(name);
         et_contactNumber.setText(number);
+        super.onResume();
+    }
+
+    public void setNameAndNumber(String name, String number) {
+        this.name = name;
+        this.number = number;
     }
 }

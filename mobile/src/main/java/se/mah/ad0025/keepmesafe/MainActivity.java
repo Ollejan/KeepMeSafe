@@ -274,6 +274,7 @@ public class MainActivity extends AppCompatActivity
         if(addContactFragment == null)
             addContactFragment = new AddContactFragment();
         fm.beginTransaction().replace(R.id.container, addContactFragment, "contacts").addToBackStack(null).commit();
+        addContactFragment.setNameAndNumber("", "");
     }
 
     /**
@@ -339,7 +340,7 @@ public class MainActivity extends AppCompatActivity
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         builder.setTitle("Confirm");
-        builder.setMessage("Are you sure?");
+        builder.setMessage("Delete contact?");
 
         builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
 
@@ -379,11 +380,18 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onUpdateContactClicked(int ID, String name, String number) {
+        for(int i = 0; i < contacts.size(); i++) {
+            if(contacts.get(i).getNumber().equals(number)) {
+                Snackbar.make(findViewById(R.id.container), "Number already added", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                return;
+            }
+        }
+
         if(name.trim().length() == 0 || number.trim().length() == 0) {
             Snackbar.make(findViewById(R.id.container), "Please enter name and number", Snackbar.LENGTH_LONG).setAction("Action", null).show();
         } else {
             dbController.open();
-            dbController.updateContact(ID, name, number);
+            dbController.updateContact(ID, name.trim(), number.replace(" ", ""));
             dbController.close();
             getAllContactsFromDB();
             fm.popBackStack();
