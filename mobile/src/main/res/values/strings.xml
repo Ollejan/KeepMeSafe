@@ -8,5 +8,22 @@
     <string name="Title">KeepMeSafe</string>
     <string name="iconDesc">Icon of application</string>
     <string name="Authors"><![CDATA[by Sebastian Aspegren & Jonas Dahlström]]></string>
+    <string name="textMessage">textMessage</string>
+    <string name="contactSaved">Contact saved</string>
+    <string name="RequestNameAndNbr">Please enter name and number</string>
+    <string name="Action">Action</string>
+    <string name="NbrAlreadyAdded">Number already added</string>
+    <string name="NO">NO</string>
+    <string name="contactDeleted">Contact deleted</string>
+    <string name="YES">YES</string>
+    <string name="InquireDeleteContact">Delete contact?</string>
+    <string name="Confirm">Confirm</string>
+    <string name="ContactAddSuccess">Contact added successfully</string>
+    <string name="ContactAlreadyAdded">Contact already added</string>
+    <string name="contacts">contacts</string>
+    <string name="No">No</string>
+    <string name="PermissionInfoReadContacts">You need this permission to pick a contact and automatically import its name and number. Are you sure you don\'t want it?</string>
+    <string name="Yes">Yes</string>
+    <string name="manage">manage</string>
 
 </resources>

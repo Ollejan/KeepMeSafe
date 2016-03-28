@@ -73,12 +73,14 @@ public class MainActivity extends AppCompatActivity
             toggle.syncState();
             navigationView = (NavigationView) findViewById(R.id.nav_view); //Drawer-menyn. Används bl.a. för att avmarkera i menyn vid bakåtklick.
             navigationView.setNavigationItemSelectedListener(this);
+            /*
             if (savedInstanceState != null) {
 //Här läggs det som bara ska ske vid rotation men inte första gången. Tex hämta värden via savedInstanceState.
                 addContactFragment = (AddContactFragment) fm.findFragmentByTag("contacts");
                 manageContactsFragment = (ManageContactsFragment)fm.findFragmentByTag("manage");
                 return;
             }
+            */
 //Här läggs det som ska ske första gången men inte efter rotation.
             fm = getSupportFragmentManager();
             fm.beginTransaction().replace(R.id.container, mainFragment).commit();
@@ -122,12 +124,12 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_Manage) {
             if(manageContactsFragment == null)
                 manageContactsFragment = new ManageContactsFragment();
-            fm.beginTransaction().replace(R.id.container, manageContactsFragment, "manage").commit();
+            fm.beginTransaction().replace(R.id.container, manageContactsFragment, getString(R.string.manage)).commit();
         } else if (id == R.id.nav_Edit) {
             if(editMessageFragment == null)
                 editMessageFragment = new EditMessageFragment();
             fm.beginTransaction().replace(R.id.container, editMessageFragment).commit();
-            editMessageFragment.setMessage(prefs.getString("textMessage", ""));
+            editMessageFragment.setMessage(prefs.getString(getString(R.string.textMessage), ""));
         } else if (id == R.id.nav_What) {
             Intent intent = new Intent(this, HelpActivity.class);
             startActivity(intent);
@@ -192,8 +194,8 @@ public class MainActivity extends AppCompatActivity
 
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setMessage("You need this permission to pick a contact and automatically import its name and number. Are you sure you don't want it?").setPositiveButton("Yes", dialogClickListener)
-                            .setNegativeButton("No", dialogClickListener).show();
+                    builder.setMessage(getString(R.string.PermissionInfoReadContacts)).setPositiveButton(getString(R.string.Yes), dialogClickListener)
+                            .setNegativeButton(getString(R.string.No), dialogClickListener).show();
 
                 } else {
 
@@ -275,7 +277,7 @@ public class MainActivity extends AppCompatActivity
     public void onManageAddContactBtnClicked() {
         if(addContactFragment == null)
             addContactFragment = new AddContactFragment();
-        fm.beginTransaction().replace(R.id.container, addContactFragment, "contacts").addToBackStack(null).commit();
+        fm.beginTransaction().replace(R.id.container, addContactFragment, getString(R.string.contacts)).addToBackStack(null).commit();
         addContactFragment.setNameAndNumber("", "");
     }
 
@@ -291,7 +293,7 @@ public class MainActivity extends AppCompatActivity
     public void onAddContactBtnClicked(String name, String number) {
         for(int i = 0; i < contacts.size(); i++) {
             if(contacts.get(i).getNumber().equals(number)) {
-                Snackbar.make(findViewById(R.id.container), "Contact already added", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                Snackbar.make(findViewById(R.id.container), R.string.ContactAlreadyAdded, Snackbar.LENGTH_LONG).setAction(R.string.Action, null).show();
                 return;
             }
         }
@@ -301,7 +303,7 @@ public class MainActivity extends AppCompatActivity
         dbController.close();
         getAllContactsFromDB();
         fm.popBackStack();
-        Snackbar.make(findViewById(R.id.container), "Contact added successfully", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+        Snackbar.make(findViewById(R.id.container), R.string.ContactAddSuccess, Snackbar.LENGTH_LONG).setAction(R.string.Action, null).show();
     }
 
     /**
@@ -341,10 +343,10 @@ public class MainActivity extends AppCompatActivity
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        builder.setTitle("Confirm");
-        builder.setMessage("Delete contact?");
+        builder.setTitle(getString(R.string.Confirm));
+        builder.setMessage(getString(R.string.InquireDeleteContact));
 
-        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(getString(R.string.YES), new DialogInterface.OnClickListener() {
 
             public void onClick(DialogInterface dialog, int which) {
                 dbController.open();
@@ -353,12 +355,12 @@ public class MainActivity extends AppCompatActivity
                 getAllContactsFromDB();
                 fm.popBackStack();
                 dialog.dismiss();
-                Snackbar.make(findViewById(R.id.container), "Contact deleted", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                Snackbar.make(findViewById(R.id.container), R.string.contactDeleted, Snackbar.LENGTH_LONG).setAction(R.string.Action, null).show();
             }
 
         });
 
-        builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.NO), new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -384,20 +386,20 @@ public class MainActivity extends AppCompatActivity
     public void onUpdateContactClicked(int ID, String name, String number) {
         for(int i = 0; i < contacts.size(); i++) {
             if(contacts.get(i).getNumber().equals(number)) {
-                Snackbar.make(findViewById(R.id.container), "Number already added", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                Snackbar.make(findViewById(R.id.container), R.string.NbrAlreadyAdded, Snackbar.LENGTH_LONG).setAction(R.string.Action, null).show();
                 return;
             }
         }
 
         if(name.trim().length() == 0 || number.trim().length() == 0) {
-            Snackbar.make(findViewById(R.id.container), "Please enter name and number", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+            Snackbar.make(findViewById(R.id.container), R.string.RequestNameAndNbr, Snackbar.LENGTH_LONG).setAction(R.string.Action, null).show();
         } else {
             dbController.open();
             dbController.updateContact(ID, name.trim(), number.replace(" ", ""));
             dbController.close();
             getAllContactsFromDB();
             fm.popBackStack();
-            Snackbar.make(findViewById(R.id.container), "Contact saved", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+            Snackbar.make(findViewById(R.id.container), R.string.contactSaved, Snackbar.LENGTH_LONG).setAction(R.string.Action, null).show();
         }
     }
 
@@ -408,7 +410,7 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onSaveMessageBtnClicked(String message) {
-        prefs.edit().putString("textMessage", message).apply();
+        prefs.edit().putString(getString(R.string.textMessage), message).apply();
         fm.beginTransaction().replace(R.id.container, mainFragment).commit();
         navigationView.getMenu().getItem(0).setChecked(false);
         navigationView.getMenu().getItem(1).setChecked(false);
