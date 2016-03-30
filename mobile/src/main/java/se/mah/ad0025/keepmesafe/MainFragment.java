@@ -1,6 +1,8 @@
 package se.mah.ad0025.keepmesafe;
 
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -14,7 +16,27 @@ import android.widget.Button;
  * A simple {@link Fragment} subclass.
  */
 public class MainFragment extends Fragment {
+    private OnHelpClickedListener helpBtnClicked;
 
+    public interface OnHelpClickedListener {
+        void onHelpBtnClicked();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        Activity activity = context instanceof Activity ? (Activity) context : null;
+
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            helpBtnClicked = (OnHelpClickedListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnHelpClickedListener");
+        }
+
+    }
 
     public MainFragment() {
         // Required empty public constructor
@@ -31,7 +53,8 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //ToDo Hämta koordinater och skicka iväg SMS.
-                Snackbar.make(v, "Messages have been sent", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                helpBtnClicked.onHelpBtnClicked();
+                //Snackbar.make(v, "Messages have been sent", Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
         });
 

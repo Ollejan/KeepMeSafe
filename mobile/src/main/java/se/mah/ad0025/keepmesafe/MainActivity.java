@@ -1,13 +1,17 @@
 package se.mah.ad0025.keepmesafe;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.provider.ContactsContract;
+import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -21,6 +25,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 
 import java.util.ArrayList;
@@ -30,10 +35,11 @@ import se.mah.ad0025.keepmesafe.help.HelpActivity;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, AddContactFragment.OnImportClickedListener, AddContactFragment.OnAddContactClickedListener,
         ManageContactsFragment.OnManageAddContactClickedListener, ManageContactsFragment.OnManageListItemClickedListener, ContactDetailsFragment.OnDeleteContactClickedListener,
-        ContactDetailsFragment.OnUpdateContactClickedListener, EditMessageFragment.OnSaveMessageClickedListener {
+        ContactDetailsFragment.OnUpdateContactClickedListener, EditMessageFragment.OnSaveMessageClickedListener, MainFragment.OnHelpClickedListener {
 
     private static final int PICK_CONTACT = 123;
     private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 64;
+    private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 11;
     private NavigationView navigationView;
     private FragmentManager fm;
     private SharedPreferences prefs;
@@ -44,6 +50,8 @@ public class MainActivity extends AppCompatActivity
     private ManageContactsFragment manageContactsFragment;
     private ContactDetailsFragment contactDetailsFragment;
     private EditMessageFragment editMessageFragment;
+    private LocationManager locationManager;
+    private GPSTracker gps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +59,8 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         prefs = getSharedPreferences("KeepMeSafePrefs", MODE_PRIVATE);
+        locationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
+        gps = new GPSTracker(MainActivity.this);
 
         dbController = new DBController(this);
         mainFragment = new MainFragment();
@@ -91,6 +101,45 @@ public class MainActivity extends AppCompatActivity
 
         manageContactsFragment.setAdapter(new ContactListAdapter(this, contacts));
         getAllContactsFromDB();
+        enableLocationPermission();
+        enableGPSDialog();
+    }
+
+    @Override
+    protected void onPause() {
+        gps.stopUsingGPS();
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        gps = new GPSTracker(MainActivity.this);
+        super.onResume();
+    }
+
+    /**
+     * Metod som körs vid programstart som kollar om GPS är aktiverat eller ej.
+     * Om GPS är inaktiverat så visas en dialogruta som tar en till inställningar för GPS.
+     */
+    private void enableGPSDialog() {
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(R.string.gps_disabled_message)
+                    .setCancelable(false)
+                    .setPositiveButton(getString(R.string.Yes), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                            startActivity(intent);
+                        }
+                    })
+                    .setNegativeButton(getString(R.string.No), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
     }
 
     @Override
@@ -171,6 +220,19 @@ public class MainActivity extends AppCompatActivity
                 }
                 return;
             }
+            case MY_PERMISSIONS_REQUEST_FINE_LOCATION: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    getCurrentLocation();
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
 
             // other 'case' lines to check for other
             // permissions this app might request
@@ -229,6 +291,70 @@ public class MainActivity extends AppCompatActivity
             switch (which){
                 case DialogInterface.BUTTON_POSITIVE:
                     requestPermission();
+                    break;
+
+                case DialogInterface.BUTTON_NEGATIVE:
+                    //No button clicked
+                    break;
+            }
+        }
+    };
+
+    private void enableLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == -1) {
+// Here, thisActivity is the current activity
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                // Should we show an explanation?
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                    // Show an expanation to the user *asynchronously* -- don't block
+                    // this thread waiting for the user's response! After the user
+                    // sees the explanation, try again to request the permission.
+
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage(getString(R.string.PermissionInfoGetLocation)).setPositiveButton(getString(R.string.Yes), dialogClickListenerLocation)
+                            .setNegativeButton(getString(R.string.No), dialogClickListenerLocation).show();
+
+                } else {
+
+                    // No explanation needed, we can request the permission.
+                    requestPermissionLocation();
+
+                }
+            } else {
+                getCurrentLocation();
+            }
+        } else {
+            getCurrentLocation();
+        }
+    }
+
+    private void requestPermissionLocation() {
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                MY_PERMISSIONS_REQUEST_FINE_LOCATION);
+    }
+
+    private void getCurrentLocation() {
+        gps = new GPSTracker(MainActivity.this);
+        if(gps.canGetLocation()) {
+            Snackbar.make(findViewById(R.id.container), "Lat: " + gps.getLatitude() + ", Long: " + gps.getLongitude(), Snackbar.LENGTH_LONG).setAction(R.string.Action, null).show();
+        } else {
+            Snackbar.make(findViewById(R.id.container), "Failed to get coordinates, please try again.", Snackbar.LENGTH_LONG).setAction(R.string.Action, null).show();
+        }
+    }
+
+    DialogInterface.OnClickListener dialogClickListenerLocation = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which){
+                case DialogInterface.BUTTON_POSITIVE:
+                    requestPermissionLocation();
                     break;
 
                 case DialogInterface.BUTTON_NEGATIVE:
@@ -416,5 +542,10 @@ public class MainActivity extends AppCompatActivity
         navigationView.getMenu().getItem(1).setChecked(false);
         navigationView.getMenu().getItem(2).setChecked(false);
         navigationView.getMenu().getItem(3).setChecked(false);
+    }
+
+    @Override
+    public void onHelpBtnClicked() {
+        enableLocationPermission();
     }
 }

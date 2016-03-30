@@ -22,8 +22,10 @@
     <string name="ContactAlreadyAdded">Contact already added</string>
     <string name="contacts">contacts</string>
     <string name="No">No</string>
-    <string name="PermissionInfoReadContacts">You need this permission to pick a contact and automatically import its name and number. Are you sure you don\'t want it?</string>
+    <string name="PermissionInfoReadContacts">You need the contact permission to pick a contact and automatically import its name and number. Do you want to enable it?</string>
     <string name="Yes">Yes</string>
     <string name="manage">manage</string>
+    <string name="gps_disabled_message">It is recommended that you enable the GPS so your coordinates are sent to your contacts.</string>
+    <string name="PermissionInfoGetLocation">You need the location permission to be able to send your coordinates to your contacts. Do you want to enable it?</string>
 
 </resources>
