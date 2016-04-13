@@ -7,9 +7,26 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Undrar du något annat klicka på How do I use this"
+        android:layout_height="wrap_content"
+        android:text="First you will need to add the contacts who should receive the text messages."
         android:textAlignment="center"
-        android:textSize="24dp" />
+        android:textSize="14sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Do this by opening the menu and click 'Manage Contacts'. Then click the 'Add new contact' button and import contacts or manually enter name and number. Then click 'Add contact'."
+        android:textAlignment="center"
+        android:textSize="14sp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_gravity="center"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY"
+        android:src="@drawable/add_contact_image"
+        android:contentDescription="Add contact tutorial image"/>
 
 </LinearLayout>

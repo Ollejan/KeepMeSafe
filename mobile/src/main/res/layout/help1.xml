@@ -7,9 +7,17 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="I den här appen gäller det att ha folkvett"
+        android:layout_height="wrap_content"
+        android:text="Welcome to KeepMeSafe, the app that will keep you safe! This short tutorial will teach you all about how it works."
         android:textAlignment="center"
-        android:textSize="24dp" />
+        android:layout_marginBottom="20dp"
+        android:textSize="20sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="KeepMeSafe will send text messages to your friends and family when you don't feel safe. Just press the button! Your coordinates will automatically be added to the text messages so your contacts know exactly where you are."
+        android:textAlignment="center"
+        android:textSize="14sp" />
 
 </LinearLayout>

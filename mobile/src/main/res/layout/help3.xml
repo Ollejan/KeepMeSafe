@@ -7,9 +7,34 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Gå hem"
+        android:layout_height="wrap_content"
+        android:text="Then you will have to enter the message that will be sent to your contacts."
         android:textAlignment="center"
-        android:textSize="24dp" />
+        android:textSize="14sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="After this you can just press the big red button to send the text messages to your contacts whenever you feel unsafe."
+        android:textAlignment="center"
+        android:textSize="14sp" />
+
+    <Button
+        android:layout_marginTop="10dp"
+        android:id="@+id/btn_tutorial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Start using the app"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_gravity="center"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY"
+        android:src="@drawable/add_message_image"
+        android:contentDescription="Add contact tutorial image"/>
 
 </LinearLayout>
