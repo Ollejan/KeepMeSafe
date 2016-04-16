@@ -1,11 +1,13 @@
 package se.mah.ad0025.keepmesafe.help;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import se.mah.ad0025.keepmesafe.R;
 
@@ -14,6 +16,7 @@ public class HelpFragment extends Fragment {
 
     public static final String ARG_PAGE = "page";
     private int mPageNumber;
+    private helpListener mCallback;
 
     public static HelpFragment create(int pageNumber) {
         HelpFragment fragment = new HelpFragment();
@@ -49,8 +52,38 @@ public class HelpFragment extends Fragment {
 
             case 2:
                 rootView = (ViewGroup) inflater.inflate(R.layout.help3, container, false);
+                Button btnTutorial = (Button) rootView.findViewById(R.id.btn_tutorial);
+                btnTutorial.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mCallback.btnCloseHelpClicked();
+                    }
+                });
                 break;
         }
         return rootView;
+    }
+
+    public interface helpListener {
+        void btnCloseHelpClicked();
+    }
+
+    /**
+     * A method that is called when the fragment is first attached to the activity
+     *
+     * @param activity The activity it becomes attached to.
+     */
+    @Override
+    public void onAttach(Context activity) {
+        super.onAttach(activity);
+
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            mCallback = (helpListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement ConcertListener");
+        }
     }
 }

@@ -13,7 +13,7 @@ import android.widget.RadioGroup;
 
 import se.mah.ad0025.keepmesafe.R;
 
-public class HelpActivity extends FragmentActivity {
+public class HelpActivity extends FragmentActivity implements HelpFragment.helpListener {
 
     private static final int NUM_PAGES = 3;
     private ViewPager mPager;
@@ -94,6 +94,11 @@ public class HelpActivity extends FragmentActivity {
     public void rbClicked(int position) {
         if(mPager.getCurrentItem()!=position)
         mPager.setCurrentItem(position);
+    }
+
+    @Override
+    public void btnCloseHelpClicked() {
+        finish();
     }
 
     private class HelpAdapter extends FragmentStatePagerAdapter {
