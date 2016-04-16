@@ -8,15 +8,15 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="First you will need to add the contacts who should receive the text messages."
-        android:textAlignment="center"
+        android:text="@string/tutorialStep1Header"
+        android:gravity="center"
         android:textSize="14sp" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Do this by opening the menu and click 'Manage Contacts'. Then click the 'Add new contact' button and import contacts or manually enter name and number. Then click 'Add contact'."
-        android:textAlignment="center"
+        android:text="@string/tutorialStep1"
+        android:gravity="center"
         android:textSize="14sp" />
 
     <ImageView
@@ -27,6 +27,6 @@
         android:adjustViewBounds="true"
         android:scaleType="fitXY"
         android:src="@drawable/add_contact_image"
-        android:contentDescription="Add contact tutorial image"/>
+        android:contentDescription="@string/AddContactTutorialImage"/>
 
 </LinearLayout>

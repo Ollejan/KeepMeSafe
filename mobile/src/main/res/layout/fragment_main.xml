@@ -13,7 +13,7 @@
         android:layout_marginRight="30dp"
         android:layout_marginTop="80dp"
         android:layout_marginBottom="80dp"
-        android:text="HELP"
+        android:text="@string/HelpCaps"
         style="@style/button_text" />
 
 </FrameLayout>

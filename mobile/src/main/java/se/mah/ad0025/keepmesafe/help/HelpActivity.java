@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import se.mah.ad0025.keepmesafe.MainActivity;
 import se.mah.ad0025.keepmesafe.R;
 
 public class HelpActivity extends FragmentActivity implements HelpFragment.helpListener {

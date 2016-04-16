@@ -84,9 +84,9 @@ public class ManageContactsFragment extends Fragment {
     @Override
     public void onResume() {
         if(adapter.isEmpty())
-            tvListInfo.setText("List is empty, please add contacts...");
+            tvListInfo.setText(R.string.listEmptyPrompt);
         else
-            tvListInfo.setText("Contacts:");
+            tvListInfo.setText(R.string.contactsColon);
         super.onResume();
     }
 

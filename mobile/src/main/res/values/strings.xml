@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">KeepMeSafe</string>
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -27,5 +26,31 @@
     <string name="manage">manage</string>
     <string name="gps_disabled_message">It is recommended that you enable the GPS so your coordinates are sent to your contacts.</string>
     <string name="PermissionInfoGetLocation">You need the location permission to be able to send your coordinates to your contacts. Do you want to enable it?</string>
+    <string name="tutorialWelcome">Welcome to KeepMeSafe, the app that will keep you safe! This short tutorial will teach you all about how it works.</string>
+    <string name="tutorialInfo">KeepMeSafe will send text messages to your friends and family when you don\'t feel safe. Just press the button! Your coordinates will automatically be added to the text messages so your contacts know exactly where you are.</string>
+    <string name="tutorialStep1Header">First you will need to add the contacts who should receive the text messages.</string>
+    <string name="tutorialStep1">Do this by opening the menu and click \'Manage Contacts\'. Then click the \'Add new contact\' button and import contacts or manually enter name and number. Then click \'Add contact\'.</string>
+    <string name="AddContactTutorialImage">Add contact tutorial image</string>
+    <string name="TutorialMsg">Then you will have to enter the message that will be sent to your contacts.</string>
+    <string name="TutorialBtn">After this you can just press the big red button to send the text messages to your contacts whenever you feel unsafe.</string>
+    <string name="TutorialUseApp">Start using the app</string>
+    <string name="manageContacts">Manage Contacts</string>
+    <string name="addNewContact">Add new contact</string>
+    <string name="contactsColon">Contacts:</string>
+    <string name="HelpCaps">HELP</string>
+    <string name="editMessage">Edit Message</string>
+    <string name="coordinateAutoAdd">Your coordinates will be added automatically at the end of the message.</string>
+    <string name="save">Save</string>
+    <string name="contactDetails">Contact details</string>
+    <string name="contactNameColon">Contact name:</string>
+    <string name="contactNbrColon">Contact number:</string>
+    <string name="saveContact">Save contact</string>
+    <string name="ImportContactInfo">You can import contacts from your phone by pressing this button and picking a contact you\'d like to add.</string>
+    <string name="importFromContacts">Import from contacts</string>
+    <string name="name">Name</string>
+    <string name="number">Number</string>
+    <string name="addContact">Add contact</string>
+    <string name="whatIsThis">What is this?</string>
+    <string name="listEmptyPrompt">List is empty, please add contacts...</string>
 
 </resources>

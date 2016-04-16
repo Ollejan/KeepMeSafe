@@ -10,14 +10,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
-        android:text="Manage contacts" />
+        android:text="@string/manageContacts" />
 
     <Button
         android:id="@+id/btn_manageAddContact"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="25dp"
-        android:text="Add new contact"/>
+        android:text="@string/addNewContact"/>
 
     <TextView
         android:id="@+id/tvListInfo"
@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:textSize="16sp"
-        android:text="Contacts:"/>
+        android:text="@string/contactsColon"/>
 
     <ListView
         android:id="@+id/lvContacts"

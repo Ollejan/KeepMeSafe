@@ -5,19 +5,15 @@
         <item
             android:id="@+id/nav_Manage"
             android:icon="@android:drawable/ic_menu_manage"
-            android:title="Manage Contacts" />
+            android:title="@string/manageContacts" />
         <item
             android:id="@+id/nav_Edit"
             android:icon="@android:drawable/ic_menu_edit"
-            android:title="Edit Message" />
+            android:title="@string/editMessage" />
         <item
             android:id="@+id/nav_What"
             android:icon="@android:drawable/ic_dialog_info"
-            android:title="What is this?" />
-        <item
-            android:id="@+id/nav_How"
-            android:icon="@android:drawable/ic_menu_help"
-            android:title="How do I use this?" />
+            android:title="@string/whatIsThis" />
     </group>
 
 </menu>

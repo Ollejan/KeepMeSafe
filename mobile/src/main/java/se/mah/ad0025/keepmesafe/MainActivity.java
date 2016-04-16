@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity
         ContactDetailsFragment.OnUpdateContactClickedListener, EditMessageFragment.OnSaveMessageClickedListener, MainFragment.OnHelpClickedListener {
 
     private static final int PICK_CONTACT = 123;
+    private static final int HELP_CLOSED = 666;
     private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 64;
     private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 11;
     private NavigationView navigationView;
@@ -56,7 +57,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         prefs = getSharedPreferences("KeepMeSafePrefs", MODE_PRIVATE);
-        locationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         gps = new GPSTracker(MainActivity.this);
 
         dbController = new DBController(this);
@@ -149,11 +150,7 @@ public class MainActivity extends AppCompatActivity
             fm.popBackStack();
         } else if (!(currentFragment instanceof MainFragment)) {
             fm.beginTransaction().replace(R.id.container, mainFragment).commit();
-            //Följande rader avmarkerar samtliga meny-items vid bakåtklick.
-            navigationView.getMenu().getItem(0).setChecked(false);
-            navigationView.getMenu().getItem(1).setChecked(false);
-            navigationView.getMenu().getItem(2).setChecked(false);
-            navigationView.getMenu().getItem(3).setChecked(false);
+            unCheckDrawer();
         } else {
             super.onBackPressed();
         }
@@ -168,19 +165,17 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_Manage) {
-            if(manageContactsFragment == null)
+            if (manageContactsFragment == null)
                 manageContactsFragment = new ManageContactsFragment();
             fm.beginTransaction().replace(R.id.container, manageContactsFragment, getString(R.string.manage)).commit();
         } else if (id == R.id.nav_Edit) {
-            if(editMessageFragment == null)
+            if (editMessageFragment == null)
                 editMessageFragment = new EditMessageFragment();
             fm.beginTransaction().replace(R.id.container, editMessageFragment).commit();
             editMessageFragment.setMessage(prefs.getString(getString(R.string.textMessage), ""));
         } else if (id == R.id.nav_What) {
             Intent intent = new Intent(this, HelpActivity.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_How) {
-
+            startActivityForResult(intent, HELP_CLOSED);
         }
 
         item.setChecked(true);  //Markerar vald item i drawern.
@@ -188,6 +183,7 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 
     /**
      * Metod som tömmer backstacken. Sker när användaren klickar på något i drawern.
@@ -198,6 +194,8 @@ public class MainActivity extends AppCompatActivity
             fm.popBackStack(first.getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
     }
+
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -259,24 +257,24 @@ public class MainActivity extends AppCompatActivity
                 } else {
 
                     // No explanation needed, we can request the permission.
-                   requestPermission();
+                    requestPermission();
 
                 }
             } else {
-               openContacts();
+                openContacts();
             }
         } else {
             openContacts();
         }
     }
 
-    private void requestPermission(){
+    private void requestPermission() {
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.READ_CONTACTS},
                 MY_PERMISSIONS_REQUEST_READ_CONTACTS);
     }
 
-    private void openContacts(){
+    private void openContacts() {
         Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
         intent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
         startActivityForResult(intent, PICK_CONTACT);
@@ -285,7 +283,7 @@ public class MainActivity extends AppCompatActivity
     DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
-            switch (which){
+            switch (which) {
                 case DialogInterface.BUTTON_POSITIVE:
                     requestPermission();
                     break;
@@ -339,7 +337,7 @@ public class MainActivity extends AppCompatActivity
 
     private void getCurrentLocation() {
         gps = new GPSTracker(MainActivity.this);
-        if(gps.canGetLocation()) {
+        if (gps.canGetLocation()) {
             Snackbar.make(findViewById(R.id.container), "Lat: " + gps.getLatitude() + ", Long: " + gps.getLongitude(), Snackbar.LENGTH_LONG).setAction(R.string.Action, null).show();
         } else {
             Snackbar.make(findViewById(R.id.container), "Failed to get coordinates, please try again.", Snackbar.LENGTH_LONG).setAction(R.string.Action, null).show();
@@ -349,7 +347,7 @@ public class MainActivity extends AppCompatActivity
     DialogInterface.OnClickListener dialogClickListenerLocation = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
-            switch (which){
+            switch (which) {
                 case DialogInterface.BUTTON_POSITIVE:
                     requestPermissionLocation();
                     break;
@@ -389,7 +387,11 @@ public class MainActivity extends AppCompatActivity
 
                 people.close();
             }
+            //Avmarkera meny när hjälpen stängs.
+        } else if(requestCode == HELP_CLOSED) {
+            unCheckDrawer();
         }
+
     }
 
     /**
@@ -398,7 +400,7 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onManageAddContactBtnClicked() {
-        if(addContactFragment == null)
+        if (addContactFragment == null)
             addContactFragment = new AddContactFragment();
         fm.beginTransaction().replace(R.id.container, addContactFragment, getString(R.string.contacts)).addToBackStack(null).commit();
         addContactFragment.setNameAndNumber("", "");
@@ -408,14 +410,13 @@ public class MainActivity extends AppCompatActivity
      * Metod som körs när användaren klickar på knappen som lägger till ny kontakt.
      * Lägger till kontakten i databasen och uppdaterar ArrayListan med hjälp av metoden
      * "getAllContactsFromDB".
-     * @param name
-     *          Namnet på kontakten.
-     * @param number
-     *          Numret till kontakten.
+     *
+     * @param name   Namnet på kontakten.
+     * @param number Numret till kontakten.
      */
     public void onAddContactBtnClicked(String name, String number) {
-        for(int i = 0; i < contacts.size(); i++) {
-            if(contacts.get(i).getNumber().equals(number)) {
+        for (int i = 0; i < contacts.size(); i++) {
+            if (contacts.get(i).getNumber().equals(number)) {
                 Snackbar.make(findViewById(R.id.container), R.string.ContactAlreadyAdded, Snackbar.LENGTH_LONG).setAction(R.string.Action, null).show();
                 return;
             }
@@ -438,12 +439,12 @@ public class MainActivity extends AppCompatActivity
         contacts.clear();
         dbController.open();
         Cursor c = dbController.getContacts();
-        if( c.moveToFirst() ){
-            do{
+        if (c.moveToFirst()) {
+            do {
                 newContact = new Contact(c.getString(1), c.getString(2));
                 newContact.setID(c.getInt(0));
                 contacts.add(newContact);
-            }while(c.moveToNext());
+            } while (c.moveToNext());
         }
         c.close();
         dbController.close();
@@ -457,8 +458,8 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * Metod som raderar en kontakt från databasen och uppdaterar kontaktlistan.
-     * @param ID
-     *          Unikt ID till den kontakt som ska raderas från databasen.
+     *
+     * @param ID Unikt ID till den kontakt som ska raderas från databasen.
      */
     @Override
     public void onDeleteContactClicked(int ID) {
@@ -498,23 +499,21 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * Metod som uppdaterar en kontakt i databasen med nytt namn/nummer.
-     * @param ID
-     *          Unikt ID till den kontakt som ska uppdateras.
-     * @param name
-     *          Det namn det ska uppdateras till.
-     * @param number
-     *          Det nummer det ska uppdateras till.
+     *
+     * @param ID     Unikt ID till den kontakt som ska uppdateras.
+     * @param name   Det namn det ska uppdateras till.
+     * @param number Det nummer det ska uppdateras till.
      */
     @Override
     public void onUpdateContactClicked(int ID, String name, String number) {
-        for(int i = 0; i < contacts.size(); i++) {
-            if(contacts.get(i).getNumber().equals(number)) {
+        for (int i = 0; i < contacts.size(); i++) {
+            if (contacts.get(i).getNumber().equals(number)) {
                 Snackbar.make(findViewById(R.id.container), R.string.NbrAlreadyAdded, Snackbar.LENGTH_LONG).setAction(R.string.Action, null).show();
                 return;
             }
         }
 
-        if(name.trim().length() == 0 || number.trim().length() == 0) {
+        if (name.trim().length() == 0 || number.trim().length() == 0) {
             Snackbar.make(findViewById(R.id.container), R.string.RequestNameAndNbr, Snackbar.LENGTH_LONG).setAction(R.string.Action, null).show();
         } else {
             dbController.open();
@@ -528,17 +527,20 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * Metod som sparar användarens textmeddelande i SharedPreferences.
-     * @param message
-     *          Textmeddelandet som användaren vill spara.
+     *
+     * @param message Textmeddelandet som användaren vill spara.
      */
     @Override
     public void onSaveMessageBtnClicked(String message) {
         prefs.edit().putString(getString(R.string.textMessage), message).apply();
         fm.beginTransaction().replace(R.id.container, mainFragment).commit();
+        unCheckDrawer();
+    }
+
+    public void unCheckDrawer() {
         navigationView.getMenu().getItem(0).setChecked(false);
         navigationView.getMenu().getItem(1).setChecked(false);
         navigationView.getMenu().getItem(2).setChecked(false);
-        navigationView.getMenu().getItem(3).setChecked(false);
     }
 
     @Override

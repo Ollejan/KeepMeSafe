@@ -16,12 +16,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:text="Contact details" />
+            android:text="@string/contactDetails" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Contact name:"/>
+            android:text="@string/contactNameColon"/>
 
         <EditText
             android:id="@+id/et_detailsContactName"
@@ -32,7 +32,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Contact number:"/>
+            android:text="@string/contactNbrColon"/>
 
         <EditText
             android:id="@+id/et_detailsContactNumber"
@@ -44,7 +44,7 @@
             android:id="@+id/btn_updateContact"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Save contact"/>
+            android:text="@string/saveContact"/>
 
     </LinearLayout>
 
