@@ -51,6 +51,7 @@
     <string name="number">Number</string>
     <string name="addContact">Add contact</string>
     <string name="whatIsThis">What is this?</string>
-    <string name="listEmptyPrompt">List is empty, please add contacts...</string>
+    <string name="listEmptyPrompt">List is empty, please add contacts…</string>
+    <string name="firstTime">firstTime</string>
 
 </resources>

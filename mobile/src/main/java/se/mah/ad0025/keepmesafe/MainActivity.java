@@ -96,6 +96,12 @@ public class MainActivity extends AppCompatActivity
 
         //------------------------------------------------------------------------------------------
 
+        //Kollar om det är första gången användaren kör appen. Då ska tutorial visas.
+        if(prefs.getBoolean(getString(R.string.firstTime), true)) {
+            prefs.edit().putBoolean(getString(R.string.firstTime), false).apply();
+            Intent intent = new Intent(this, HelpActivity.class);
+            startActivityForResult(intent, HELP_CLOSED);
+        }
 
         manageContactsFragment.setAdapter(new ContactListAdapter(this, contacts));
         getAllContactsFromDB();

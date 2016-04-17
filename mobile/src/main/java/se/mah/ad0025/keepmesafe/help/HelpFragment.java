@@ -83,7 +83,7 @@ public class HelpFragment extends Fragment {
             mCallback = (helpListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement ConcertListener");
+                    + " must implement helpListener");
         }
     }
 }
