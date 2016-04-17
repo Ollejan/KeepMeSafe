@@ -1,64 +1,75 @@
 package se.mah.ad0025.keepmesafe;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.wearable.activity.WearableActivity;
-import android.support.wearable.view.BoxInsetLayout;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.Button;
+import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.Wearable;
+import com.google.android.gms.wearable.WearableStatusCodes;
 
-public class MainActivity extends WearableActivity {
+import java.util.List;
 
-    private static final SimpleDateFormat AMBIENT_DATE_FORMAT =
-            new SimpleDateFormat("HH:mm", Locale.US);
+public class MainActivity extends Activity {
 
-    private BoxInsetLayout mContainerView;
-    private TextView mTextView;
-    private TextView mClockView;
+    private Button btnHelp;
+    private GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setAmbientEnabled();
 
-        mContainerView = (BoxInsetLayout) findViewById(R.id.container);
-        mTextView = (TextView) findViewById(R.id.text);
-        mClockView = (TextView) findViewById(R.id.clock);
+        btnHelp = (Button) findViewById(R.id.btnHelp);
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Wearable.API)
+                .build();
+        mGoogleApiClient.connect();
+
+        btnHelp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onButtonClicked(v);
+            }
+        });
     }
 
-    @Override
-    public void onEnterAmbient(Bundle ambientDetails) {
-        super.onEnterAmbient(ambientDetails);
-        updateDisplay();
-    }
+    public void onButtonClicked(View target) {
+        if (mGoogleApiClient == null)
+            return;
 
-    @Override
-    public void onUpdateAmbient() {
-        super.onUpdateAmbient();
-        updateDisplay();
-    }
+        final PendingResult<NodeApi.GetConnectedNodesResult> nodes = Wearable.NodeApi.getConnectedNodes(mGoogleApiClient);
+        nodes.setResultCallback(new ResultCallback<NodeApi.GetConnectedNodesResult>() {
+            @Override
+            public void onResult(NodeApi.GetConnectedNodesResult result) {
+                final List<Node> nodes = result.getNodes();
+                if (nodes != null) {
+                    for (int i=0; i<nodes.size(); i++) {
+                        final Node node = nodes.get(i);
 
-    @Override
-    public void onExitAmbient() {
-        updateDisplay();
-        super.onExitAmbient();
-    }
+                        // You can just send a message
+                        //Wearable.MessageApi.sendMessage(mGoogleApiClient, node.getId(), "/KEEPMESAFE", null);
 
-    private void updateDisplay() {
-        if (isAmbient()) {
-            mContainerView.setBackgroundColor(getResources().getColor(android.R.color.black));
-            mTextView.setTextColor(getResources().getColor(android.R.color.white));
-            mClockView.setVisibility(View.VISIBLE);
-
-            mClockView.setText(AMBIENT_DATE_FORMAT.format(new Date()));
-        } else {
-            mContainerView.setBackground(null);
-            mTextView.setTextColor(getResources().getColor(android.R.color.black));
-            mClockView.setVisibility(View.GONE);
-        }
+                        // or you may want to also check check for a result:
+                        final PendingResult<MessageApi.SendMessageResult> pendingSendMessageResult = Wearable.MessageApi.sendMessage(mGoogleApiClient, node.getId(), "/KEEPMESAFE", null);
+                        pendingSendMessageResult.setResultCallback(new ResultCallback<MessageApi.SendMessageResult>() {
+                             public void onResult(MessageApi.SendMessageResult sendMessageResult) {
+                                 if (sendMessageResult.getStatus().getStatusCode()== WearableStatusCodes.SUCCESS) {
+                                     Toast.makeText(MainActivity.this, getString(R.string.messagesSent), Toast.LENGTH_LONG).show();
+                                 }
+                             }
+                        });
+                    }
+                }
+            }
+        });
     }
 }

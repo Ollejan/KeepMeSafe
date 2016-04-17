@@ -8,12 +8,12 @@
     tools:context="se.mah.ad0025.keepmesafe.MainActivity"
     tools:deviceIds="wear">
 
-    <TextView
-        android:id="@+id/text"
+    <Button
+        android:id="@+id/btnHelp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_world"
-        app:layout_box="all" />
+        android:layout_gravity="center"
+        android:text="HELP"/>
 
     <TextView
         android:id="@+id/clock"
