@@ -27,6 +27,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.MenuItem;
 
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity
     private static final int HELP_CLOSED = 666;
     private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 64;
     private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 11;
+    private static final int MY_PERMISSIONS_REQUEST_SEND_SMS = 25;
     private NavigationView navigationView;
     private FragmentManager fm;
     private SharedPreferences prefs;
@@ -55,6 +57,7 @@ public class MainActivity extends AppCompatActivity
     private EditMessageFragment editMessageFragment;
     private LocationManager locationManager;
     private GPSTracker gps;
+    private double currentLatitude, currentLongitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -210,7 +213,6 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-
     /**
      * Metod som tömmer backstacken. Sker när användaren klickar på något i drawern.
      */
@@ -220,8 +222,6 @@ public class MainActivity extends AppCompatActivity
             fm.popBackStack(first.getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
     }
-
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -233,9 +233,7 @@ public class MainActivity extends AppCompatActivity
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
                     openContacts();
-
                 } else {
-
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                 }
@@ -246,9 +244,18 @@ public class MainActivity extends AppCompatActivity
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
                     getCurrentLocation();
-
                 } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+            case MY_PERMISSIONS_REQUEST_SEND_SMS: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
+                    sendSMSMessages();
+                } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                 }
@@ -363,11 +370,11 @@ public class MainActivity extends AppCompatActivity
 
     private void getCurrentLocation() {
         gps = new GPSTracker(MainActivity.this);
-        if (gps.canGetLocation()) {
-            Snackbar.make(findViewById(R.id.container), "Lat: " + gps.getLatitude() + ", Long: " + gps.getLongitude(), Snackbar.LENGTH_LONG).setAction(R.string.Action, null).show();
-        } else {
-            Snackbar.make(findViewById(R.id.container), "Failed to get coordinates, please try again.", Snackbar.LENGTH_LONG).setAction(R.string.Action, null).show();
-        }
+//        if (gps.canGetLocation()) {
+//            Snackbar.make(findViewById(R.id.container), "Lat: " + gps.getLatitude() + ", Long: " + gps.getLongitude(), Snackbar.LENGTH_LONG).setAction(R.string.Action, null).show();
+//        } else {
+//            Snackbar.make(findViewById(R.id.container), "Failed to get coordinates, please try again.", Snackbar.LENGTH_LONG).setAction(R.string.Action, null).show();
+//        }
     }
 
     DialogInterface.OnClickListener dialogClickListenerLocation = new DialogInterface.OnClickListener() {
@@ -384,6 +391,112 @@ public class MainActivity extends AppCompatActivity
             }
         }
     };
+
+    public void enableSmsPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) == -1) {
+// Here, thisActivity is the current activity
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.SEND_SMS)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                // Should we show an explanation?
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.SEND_SMS)) {
+
+                    // Show an expanation to the user *asynchronously* -- don't block
+                    // this thread waiting for the user's response! After the user
+                    // sees the explanation, try again to request the permission.
+
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage(getString(R.string.PermissionInfoSendSms)).setPositiveButton(getString(R.string.Yes), dialogClickListenerSms)
+                            .setNegativeButton(getString(R.string.No), dialogClickListenerSms).show();
+
+                } else {
+
+                    // No explanation needed, we can request the permission.
+                    requestSmsPermission();
+
+                }
+            } else {
+                sendSMSMessages();
+            }
+        } else {
+            sendSMSMessages();
+        }
+    }
+
+    DialogInterface.OnClickListener dialogClickListenerSms = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+                    requestSmsPermission();
+                    break;
+
+                case DialogInterface.BUTTON_NEGATIVE:
+                    //No button clicked
+                    break;
+            }
+        }
+    };
+
+    private void requestSmsPermission() {
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.SEND_SMS},
+                MY_PERMISSIONS_REQUEST_SEND_SMS);
+    }
+
+    private void sendSMSMessages() {
+        if(contacts.isEmpty()) {
+            Snackbar.make(findViewById(R.id.container), getString(R.string.contactListEmpty), Snackbar.LENGTH_LONG).setAction(R.string.Action, null).show();
+            return;
+        }
+        if(!gps.canGetLocation()) {
+            sendMessages(false);
+        } else {
+            sendMessages(true);
+        }
+    }
+
+    private void sendMessages(boolean includeCoordinates) {
+        SmsManager smsManager = SmsManager.getDefault();
+        String message = prefs.getString(getString(R.string.textMessage), "");
+        boolean defaultMessage = false;
+
+        if(message.equals(""))
+            defaultMessage = true;
+
+        if(includeCoordinates) {
+            String coordinatesString = " http://maps.google.com?q=" + gps.getLatitude() + "," + gps.getLongitude();
+            String smsBody;
+            if(defaultMessage) {
+                smsBody = getString(R.string.defaultMessage) + coordinatesString;
+            } else {
+                smsBody = message + coordinatesString;
+            }
+
+            for(int i = 0; i < contacts.size(); i++) {
+                smsManager.sendTextMessage(contacts.get(i).getNumber(), null, smsBody, null, null);
+            }
+
+            Snackbar.make(findViewById(R.id.container), getString(R.string.smsSentSuccess), Snackbar.LENGTH_LONG).setAction(R.string.Action, null).show();
+        } else {
+            String smsBody;
+            if(defaultMessage) {
+                smsBody = getString(R.string.defaultMessage);
+            } else {
+                smsBody = message;
+            }
+
+            for(int i = 0; i < contacts.size(); i++) {
+                smsManager.sendTextMessage(contacts.get(i).getNumber(), null, smsBody, null, null);
+            }
+
+
+            Snackbar.make(findViewById(R.id.container), getString(R.string.smsSentWithoutCoords), Snackbar.LENGTH_LONG).setAction(R.string.Action, null).show();
+        }
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -572,5 +685,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onHelpBtnClicked() {
         enableLocationPermission();
+        enableSmsPermission();
     }
 }

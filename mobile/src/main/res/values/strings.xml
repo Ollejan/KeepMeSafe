@@ -53,5 +53,10 @@
     <string name="whatIsThis">What is this?</string>
     <string name="listEmptyPrompt">List is empty, please add contacts…</string>
     <string name="firstTime">firstTime</string>
+    <string name="PermissionInfoSendSms">You need the send SMS permission to be able to send the messages to your contacts. Do you want to enable it?</string>
+    <string name="contactListEmpty">Failed to send messages, contact list is empty</string>
+    <string name="smsSentWithoutCoords">Messages sent without coordinates</string>
+    <string name="smsSentSuccess">Messages sent successfully</string>
+    <string name="defaultMessage">I need help, please find me.</string>
 
 </resources>

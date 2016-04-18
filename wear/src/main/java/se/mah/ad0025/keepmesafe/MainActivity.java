@@ -19,7 +19,6 @@ import java.util.List;
 
 public class MainActivity extends Activity {
 
-    private Button btnHelp;
     private GoogleApiClient mGoogleApiClient;
 
     @Override
@@ -27,7 +26,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        btnHelp = (Button) findViewById(R.id.btnHelp);
+        Button btnHelp = (Button) findViewById(R.id.btnHelp);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
