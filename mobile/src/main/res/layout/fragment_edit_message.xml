@@ -16,6 +16,7 @@
     <EditText
         android:id="@+id/et_message"
         android:inputType="textMultiLine"
+        android:maxLength="100"
         android:lines="8"
         android:minLines="6"
         android:gravity="top|start"
