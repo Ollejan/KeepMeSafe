@@ -415,7 +415,6 @@ public class MainActivity extends AppCompatActivity
 
                     // No explanation needed, we can request the permission.
                     requestSmsPermission();
-
                 }
             } else {
                 sendSMSMessages();
@@ -451,11 +450,7 @@ public class MainActivity extends AppCompatActivity
             Snackbar.make(findViewById(R.id.container), getString(R.string.contactListEmpty), Snackbar.LENGTH_LONG).setAction(R.string.Action, null).show();
             return;
         }
-        if(!gps.canGetLocation()) {
-            sendMessages(false);
-        } else {
-            sendMessages(true);
-        }
+        sendMessages(gps.canGetLocation());
     }
 
     private void sendMessages(boolean includeCoordinates) {
