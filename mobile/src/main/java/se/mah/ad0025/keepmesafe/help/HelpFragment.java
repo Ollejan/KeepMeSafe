@@ -14,7 +14,7 @@ import se.mah.ad0025.keepmesafe.R;
 
 public class HelpFragment extends Fragment {
 
-    public static final String ARG_PAGE = "page";
+    private static final String ARG_PAGE = "page";
     private int mPageNumber;
     private helpListener mCallback;
 
