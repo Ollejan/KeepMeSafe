@@ -57,7 +57,6 @@ public class MainActivity extends AppCompatActivity
     private EditMessageFragment editMessageFragment;
     private LocationManager locationManager;
     private GPSTracker gps;
-    private double currentLatitude, currentLongitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -447,7 +446,7 @@ public class MainActivity extends AppCompatActivity
                 MY_PERMISSIONS_REQUEST_SEND_SMS);
     }
 
-    private void sendSMSMessages() {
+    public void sendSMSMessages() {
         if(contacts.isEmpty()) {
             Snackbar.make(findViewById(R.id.container), getString(R.string.contactListEmpty), Snackbar.LENGTH_LONG).setAction(R.string.Action, null).show();
             return;

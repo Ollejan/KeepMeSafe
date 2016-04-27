@@ -20,8 +20,6 @@ public class DataLayerListenerService extends WearableListenerService {
             // launch some Activity or do anything you like
             Log.d("myTag", "Message received from Wearable");
             Intent intent = new Intent("my-event");
-            // add data
-            intent.putExtra("message", "data");
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
         }
     }

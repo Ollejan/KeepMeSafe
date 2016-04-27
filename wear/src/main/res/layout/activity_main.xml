@@ -9,11 +9,12 @@
     tools:deviceIds="wear">
 
     <Button
+        android:background="@drawable/red_button"
         android:id="@+id/btnHelp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:text="HELP"/>
+        android:text="@string/HelpCaps"
+        style="@style/button_text" />
 
     <TextView
         android:id="@+id/clock"
