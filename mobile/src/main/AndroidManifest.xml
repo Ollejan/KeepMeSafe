@@ -16,6 +16,7 @@
         <service android:name=".DataLayerListenerService">
             <intent-filter>
                 <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
+                <action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
                 <data android:scheme="wear" android:host="*" android:path="/KEEPMESAFE" />
             </intent-filter>
         </service>

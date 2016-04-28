@@ -28,7 +28,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.telephony.SmsManager;
-import android.util.Log;
 import android.view.MenuItem;
 
 import java.util.ArrayList;
@@ -73,12 +72,6 @@ public class MainActivity extends AppCompatActivity
         contactDetailsFragment = new ContactDetailsFragment();
         editMessageFragment = new EditMessageFragment();
 
-
-        //---------- DETTA KAN VI NOG ÄNDRA OM EN DEL OM VI TAR BORT LANDSKAPSLÄGE -----------------
-
-        if (findViewById(R.id.container) != null) {
-//Här läggs det som alltid ska ske.
-
             Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -88,20 +81,8 @@ public class MainActivity extends AppCompatActivity
             toggle.syncState();
             navigationView = (NavigationView) findViewById(R.id.nav_view); //Drawer-menyn. Används bl.a. för att avmarkera i menyn vid bakåtklick.
             navigationView.setNavigationItemSelectedListener(this);
-            /*
-            if (savedInstanceState != null) {
-//Här läggs det som bara ska ske vid rotation men inte första gången. Tex hämta värden via savedInstanceState.
-                addContactFragment = (AddContactFragment) fm.findFragmentByTag("contacts");
-                manageContactsFragment = (ManageContactsFragment)fm.findFragmentByTag("manage");
-                return;
-            }
-            */
-//Här läggs det som ska ske första gången men inte efter rotation.
             fm = getSupportFragmentManager();
             fm.beginTransaction().replace(R.id.container, mainFragment).commit();
-        }
-
-        //------------------------------------------------------------------------------------------
 
         //Kollar om det är första gången användaren kör appen. Då ska tutorial visas.
         if(prefs.getBoolean(getString(R.string.firstTime), true)) {
@@ -457,13 +438,13 @@ public class MainActivity extends AppCompatActivity
         SmsManager smsManager = SmsManager.getDefault();
         String message = prefs.getString(getString(R.string.textMessage), "");
         boolean defaultMessage = false;
-
+        String smsBody;
         if(message.equals(""))
             defaultMessage = true;
 
         if(includeCoordinates) {
             String coordinatesString = " http://maps.google.com?q=" + gps.getLatitude() + "," + gps.getLongitude();
-            String smsBody;
+
             if(defaultMessage) {
                 smsBody = getString(R.string.defaultMessage) + coordinatesString;
             } else {
@@ -476,7 +457,6 @@ public class MainActivity extends AppCompatActivity
 
             Snackbar.make(findViewById(R.id.container), getString(R.string.smsSentSuccess), Snackbar.LENGTH_LONG).setAction(R.string.Action, null).show();
         } else {
-            String smsBody;
             if(defaultMessage) {
                 smsBody = getString(R.string.defaultMessage);
             } else {
