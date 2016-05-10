@@ -3,6 +3,9 @@ package se.mah.ad0025.keepmesafe.help;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 
+/**
+ * This class is used to implement animations for the slideshow.
+ */
 class ZoomOutPageTransformer implements ViewPager.PageTransformer {
     private static final float MIN_SCALE = 0.85f;
     private static final float MIN_ALPHA = 0.5f;
