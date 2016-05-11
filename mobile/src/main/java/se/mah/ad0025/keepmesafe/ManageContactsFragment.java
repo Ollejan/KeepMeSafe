@@ -19,17 +19,14 @@ import android.widget.TextView;
  * till ny kontakt.
  */
 public class ManageContactsFragment extends Fragment {
-    private OnManageAddContactClickedListener manageAddContactBtnClicked;   //Används för att mainactivity ska veta när klick sker.
-    private OnManageListItemClickedListener manageListItemClicked;
+//    private OnManageAddContactClickedListener manageAddContactBtnClicked;   //Används för att mainactivity ska veta när klick sker.
+    private ManageContactsListener manageContactsListener;
     private ContactListAdapter adapter;
     private TextView tvListInfo;
 
-    public interface OnManageAddContactClickedListener {
-        void onManageAddContactBtnClicked();
-    }
-
-    public interface OnManageListItemClickedListener {
+    public interface ManageContactsListener {
         void onManageListItemClicked(int position);
+        void onManageAddContactBtnClicked();
     }
 
     @Override
@@ -40,8 +37,7 @@ public class ManageContactsFragment extends Fragment {
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
         try {
-            manageAddContactBtnClicked = (OnManageAddContactClickedListener) activity;
-            manageListItemClicked = (OnManageListItemClickedListener) activity;
+            manageContactsListener = (ManageContactsListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnManageAddContactClickedListener and OnManageListItemClickedListener");
@@ -67,14 +63,14 @@ public class ManageContactsFragment extends Fragment {
         btnManageAddContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                manageAddContactBtnClicked.onManageAddContactBtnClicked();
+                manageContactsListener.onManageAddContactBtnClicked();
             }
         });
 
         lvContacts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                manageListItemClicked.onManageListItemClicked(position);
+                manageContactsListener.onManageListItemClicked(position);
             }
         });
 

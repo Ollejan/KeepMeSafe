@@ -17,11 +17,11 @@ import android.widget.EditText;
  * A simple {@link Fragment} subclass.
  */
 public class EditMessageFragment extends Fragment {
-    private OnSaveMessageClickedListener saveMessageBtnClicked;
+    private EditMessageListener editMessageListener;
     private EditText et_message;
     private String message;
 
-    public interface OnSaveMessageClickedListener {
+    public interface EditMessageListener {
         void onSaveMessageBtnClicked(String message);
     }
 
@@ -33,7 +33,7 @@ public class EditMessageFragment extends Fragment {
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
         try {
-            saveMessageBtnClicked = (OnSaveMessageClickedListener) activity;
+            editMessageListener = (EditMessageListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnSaveMessageClickedListener");
@@ -56,7 +56,7 @@ public class EditMessageFragment extends Fragment {
         btn_SaveMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveMessageBtnClicked.onSaveMessageBtnClicked(et_message.getText().toString());
+                editMessageListener.onSaveMessageBtnClicked(et_message.getText().toString());
                 Snackbar.make(v, "Message have been saved", Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
         });

@@ -14,21 +14,18 @@ import android.widget.EditText;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * A fragment that allows the user to edit or delete a contact.
  */
 public class ContactDetailsFragment extends Fragment {
-    private OnDeleteContactClickedListener deleteContactBtnClicked;
-    private OnUpdateContactClickedListener updateContactBtnClicked;
+    private ContactDetailsListener contactDetailsListener;
     private EditText et_detailsContactName, et_detailsContactNumber;
     private String name, number;
     private int ID;
 
-    public interface OnDeleteContactClickedListener {
-        void onDeleteContactClicked(int ID);
-    }
-
-    public interface OnUpdateContactClickedListener {
+    public interface ContactDetailsListener {
         void onUpdateContactClicked(int ID, String name, String number);
+
+        void onDeleteContactClicked(int ID);
     }
 
     @Override
@@ -39,11 +36,10 @@ public class ContactDetailsFragment extends Fragment {
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
         try {
-            deleteContactBtnClicked = (OnDeleteContactClickedListener) activity;
-            updateContactBtnClicked = (OnUpdateContactClickedListener) activity;
+            contactDetailsListener = (ContactDetailsListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnDeleteContactClickedListener and OnUpdateContactClickedListener");
+                    + " must implement ContactDetailsListener");
         }
 
     }
@@ -52,21 +48,20 @@ public class ContactDetailsFragment extends Fragment {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_contact_details, container, false);
-        et_detailsContactName = (EditText)view.findViewById(R.id.et_detailsContactName);
-        et_detailsContactNumber = (EditText)view.findViewById(R.id.et_detailsContactNumber);
-        FloatingActionButton fab_deleteContact = (FloatingActionButton)view.findViewById(R.id.fab);
-        Button btn_updateContact = (Button)view.findViewById(R.id.btn_updateContact);
+        et_detailsContactName = (EditText) view.findViewById(R.id.et_detailsContactName);
+        et_detailsContactNumber = (EditText) view.findViewById(R.id.et_detailsContactNumber);
+        FloatingActionButton fab_deleteContact = (FloatingActionButton) view.findViewById(R.id.fab);
+        Button btn_updateContact = (Button) view.findViewById(R.id.btn_updateContact);
 
         fab_deleteContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteContactBtnClicked.onDeleteContactClicked(ID);
+                contactDetailsListener.onDeleteContactClicked(ID);
             }
         });
 
@@ -75,7 +70,7 @@ public class ContactDetailsFragment extends Fragment {
             public void onClick(View v) {
                 name = et_detailsContactName.getText().toString();
                 number = et_detailsContactNumber.getText().toString();
-                updateContactBtnClicked.onUpdateContactClicked(ID, name, number);
+                contactDetailsListener.onUpdateContactClicked(ID, name, number);
             }
         });
 
@@ -90,13 +85,11 @@ public class ContactDetailsFragment extends Fragment {
     }
 
     /**
-     * Metod som uppdaterar instansvariablerna.
-     * @param name
-     *          Namnet på kontakten.
-     * @param number
-     *          Numret till kontakten.
-     * @param ID
-     *          Kontaktens ID.
+     * Method used to update the variables regarding the contact
+     *
+     * @param name   name of the contact
+     * @param number the phone number of the contact
+     * @param ID     the contacts ID
      */
     public void setNameAndNumber(String name, String number, int ID) {
         this.name = name;

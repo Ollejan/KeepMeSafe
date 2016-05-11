@@ -35,9 +35,9 @@ import java.util.ArrayList;
 import se.mah.ad0025.keepmesafe.help.HelpActivity;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, AddContactFragment.OnImportClickedListener, AddContactFragment.OnAddContactClickedListener,
-        ManageContactsFragment.OnManageAddContactClickedListener, ManageContactsFragment.OnManageListItemClickedListener, ContactDetailsFragment.OnDeleteContactClickedListener,
-        ContactDetailsFragment.OnUpdateContactClickedListener, EditMessageFragment.OnSaveMessageClickedListener, MainFragment.OnHelpClickedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, AddContactFragment.AddContactListener,
+        ManageContactsFragment.ManageContactsListener, ContactDetailsFragment.ContactDetailsListener,
+        EditMessageFragment.EditMessageListener, MainFragment.OnHelpClickedListener {
 
     private static final int PICK_CONTACT = 123;
     private static final int HELP_CLOSED = 666;
@@ -72,20 +72,20 @@ public class MainActivity extends AppCompatActivity
         contactDetailsFragment = new ContactDetailsFragment();
         editMessageFragment = new EditMessageFragment();
 
-            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-            setSupportActionBar(toolbar);
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                    this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-            drawer.setDrawerListener(toggle);
-            toggle.syncState();
-            navigationView = (NavigationView) findViewById(R.id.nav_view); //Drawer-menyn. Används bl.a. för att avmarkera i menyn vid bakåtklick.
-            navigationView.setNavigationItemSelectedListener(this);
-            fm = getSupportFragmentManager();
-            fm.beginTransaction().replace(R.id.container, mainFragment).commit();
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+        navigationView = (NavigationView) findViewById(R.id.nav_view); //Drawer-menyn. Används bl.a. för att avmarkera i menyn vid bakåtklick.
+        navigationView.setNavigationItemSelectedListener(this);
+        fm = getSupportFragmentManager();
+        fm.beginTransaction().replace(R.id.container, mainFragment).commit();
 
         //Kollar om det är första gången användaren kör appen. Då ska tutorial visas.
-        if(prefs.getBoolean(getString(R.string.firstTime), true)) {
+        if (prefs.getBoolean(getString(R.string.firstTime), true)) {
             prefs.edit().putBoolean(getString(R.string.firstTime), false).apply();
             Intent intent = new Intent(this, HelpActivity.class);
             startActivityForResult(intent, HELP_CLOSED);
@@ -213,9 +213,6 @@ public class MainActivity extends AppCompatActivity
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
                     openContacts();
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
                 }
                 return;
             }
@@ -224,9 +221,6 @@ public class MainActivity extends AppCompatActivity
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
                     getCurrentLocation();
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
                 }
                 return;
             }
@@ -235,15 +229,8 @@ public class MainActivity extends AppCompatActivity
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
                     sendSMSMessages();
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
                 }
-                return;
             }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
     }
 
@@ -427,7 +414,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void sendSMSMessages() {
-        if(contacts.isEmpty()) {
+        if (contacts.isEmpty()) {
             Snackbar.make(findViewById(R.id.container), getString(R.string.contactListEmpty), Snackbar.LENGTH_LONG).setAction(R.string.Action, null).show();
             return;
         }
@@ -439,31 +426,31 @@ public class MainActivity extends AppCompatActivity
         String message = prefs.getString(getString(R.string.textMessage), "");
         boolean defaultMessage = false;
         String smsBody;
-        if(message.equals(""))
+        if (message.equals(""))
             defaultMessage = true;
 
-        if(includeCoordinates) {
+        if (includeCoordinates) {
             String coordinatesString = " http://maps.google.com?q=" + gps.getLatitude() + "," + gps.getLongitude();
 
-            if(defaultMessage) {
+            if (defaultMessage) {
                 smsBody = getString(R.string.defaultMessage) + coordinatesString;
             } else {
                 smsBody = message + coordinatesString;
             }
 
-            for(int i = 0; i < contacts.size(); i++) {
+            for (int i = 0; i < contacts.size(); i++) {
                 smsManager.sendTextMessage(contacts.get(i).getNumber(), null, smsBody, null, null);
             }
 
             Snackbar.make(findViewById(R.id.container), getString(R.string.smsSentSuccess), Snackbar.LENGTH_LONG).setAction(R.string.Action, null).show();
         } else {
-            if(defaultMessage) {
+            if (defaultMessage) {
                 smsBody = getString(R.string.defaultMessage);
             } else {
                 smsBody = message;
             }
 
-            for(int i = 0; i < contacts.size(); i++) {
+            for (int i = 0; i < contacts.size(); i++) {
                 smsManager.sendTextMessage(contacts.get(i).getNumber(), null, smsBody, null, null);
             }
 
@@ -501,7 +488,7 @@ public class MainActivity extends AppCompatActivity
                 people.close();
             }
             //Avmarkera meny när hjälpen stängs.
-        } else if(requestCode == HELP_CLOSED) {
+        } else if (requestCode == HELP_CLOSED) {
             unCheckDrawer();
         }
 

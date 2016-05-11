@@ -48,13 +48,11 @@ public class MainFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main, container, false);
-        Button btn_help = (Button)view.findViewById(R.id.btn_help);
+        Button btn_help = (Button) view.findViewById(R.id.btn_help);
         btn_help.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //ToDo Hämta koordinater och skicka iväg SMS.
                 helpBtnClicked.onHelpBtnClicked();
-                //Snackbar.make(v, "Messages have been sent", Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
         });
 
