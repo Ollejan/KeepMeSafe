@@ -28,6 +28,11 @@ public class ContactDetailsFragment extends Fragment {
         void onDeleteContactClicked(int ID);
     }
 
+    /**
+     * Bind fragment to the parent activity
+     *
+     * @param context parent activity
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -39,15 +44,25 @@ public class ContactDetailsFragment extends Fragment {
             contactDetailsListener = (ContactDetailsListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement ContactDetailsListener");
+                    + activity.getString(R.string.implementContactDetailsListener));
         }
-
     }
 
+    /**
+     * Necessary empty constructor.
+     */
     public ContactDetailsFragment() {
         // Required empty public constructor
     }
 
+    /**
+     * Init all components of the interface and set listeners.
+     *
+     * @param inflater           default inflater
+     * @param container          default viewGroup
+     * @param savedInstanceState default Bundle
+     * @return inflated view.
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -77,6 +92,9 @@ public class ContactDetailsFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Populate the edit text using data from an imported contact.
+     */
     @Override
     public void onResume() {
         et_detailsContactName.setText(name);

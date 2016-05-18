@@ -58,5 +58,13 @@
     <string name="smsSentWithoutCoords">Messages sent without coordinates</string>
     <string name="smsSentSuccess">Messages sent successfully</string>
     <string name="defaultMessage">I need help, please find me.</string>
+    <string name="nameAndNbrPrompt">Please enter name and number</string>
+    <string name="implementAddContactListener">" must implement AddContactListener"</string>
+    <string name="implementContactDetailsListener">" must implement ContactDetailsListener"</string>
+    <string name="implementEditMessageListener">" must implement EditMessageListener"</string>
+    <string name="msgSaved">Message have been saved</string>
+    <string name="prefs">KeepMeSafePrefs</string>
+    <string name="implementMainFragmentListener">" must implement OnHelpClickedListener"</string>
+    <string name="implementManageContactsListener">" must implement ManageContactsListener"</string>
 
 </resources>

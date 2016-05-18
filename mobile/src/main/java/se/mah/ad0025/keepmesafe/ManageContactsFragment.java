@@ -15,20 +15,27 @@ import android.widget.TextView;
 
 
 /**
- * Fragment som visar en lista på kontakter som användaren lagt till samt en knapp för att lägga
- * till ny kontakt.
+ * Fragment that shows a list of contacts that the user can either click on or add more to.
  */
 public class ManageContactsFragment extends Fragment {
-//    private OnManageAddContactClickedListener manageAddContactBtnClicked;   //Används för att mainactivity ska veta när klick sker.
     private ManageContactsListener manageContactsListener;
     private ContactListAdapter adapter;
     private TextView tvListInfo;
 
+    /**
+     * Interface to message parent activity
+     */
     public interface ManageContactsListener {
         void onManageListItemClicked(int position);
+
         void onManageAddContactBtnClicked();
     }
 
+    /**
+     * Attach fragment to parent activity
+     *
+     * @param context parent activity
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -40,25 +47,34 @@ public class ManageContactsFragment extends Fragment {
             manageContactsListener = (ManageContactsListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnManageAddContactClickedListener and OnManageListItemClickedListener");
+                    + activity.getString(R.string.implementManageContactsListener));
         }
-
     }
 
+    /**
+     * Default constructor
+     */
     public ManageContactsFragment() {
         // Required empty public constructor
     }
 
-
+    /**
+     * Prepare all components and bind listeners
+     *
+     * @param inflater           default inflater
+     * @param container          default viewGroup
+     * @param savedInstanceState default Bundle
+     * @return inflated view.
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_manage_contacts, container, false);
-        ListView lvContacts = (ListView)view.findViewById(R.id.lvContacts);
-        tvListInfo = (TextView)view.findViewById(R.id.tvListInfo);
+        ListView lvContacts = (ListView) view.findViewById(R.id.lvContacts);
+        tvListInfo = (TextView) view.findViewById(R.id.tvListInfo);
         lvContacts.setAdapter(adapter);
-        Button btnManageAddContact = (Button)view.findViewById(R.id.btn_manageAddContact);
+        Button btnManageAddContact = (Button) view.findViewById(R.id.btn_manageAddContact);
 
         btnManageAddContact.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,13 +89,15 @@ public class ManageContactsFragment extends Fragment {
                 manageContactsListener.onManageListItemClicked(position);
             }
         });
-
         return view;
     }
 
+    /**
+     * If the list is empty prompt the user to add contacts, otherwise display a title.
+     */
     @Override
     public void onResume() {
-        if(adapter.isEmpty())
+        if (adapter.isEmpty())
             tvListInfo.setText(R.string.listEmptyPrompt);
         else
             tvListInfo.setText(R.string.contactsColon);
@@ -87,12 +105,11 @@ public class ManageContactsFragment extends Fragment {
     }
 
     /**
-     * Sätter adaptern på ListView.
-     * @param adapter
-     *              Adaptern som ska användas till ListView.
+     * Setter for the lists adapter
+     *
+     * @param adapter the adapter for the list
      */
     public void setAdapter(ContactListAdapter adapter) {
         this.adapter = adapter;
     }
-
 }

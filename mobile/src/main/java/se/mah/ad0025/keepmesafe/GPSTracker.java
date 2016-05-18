@@ -11,14 +11,11 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 /**
- * Klass som hämtar användarens koordinater.
- * Created by Jonas on 2016-03-30.
+ * Class used to fetch the users coordinates.
  */
 public class GPSTracker extends Service implements LocationListener {
 
     private final Context context;
-    private boolean isGPSEnabled = false;
-    private boolean isNetworkEnabled = false;
     private boolean canGetLocation = false;
     private Location location;
     private double latitude;
@@ -32,21 +29,25 @@ public class GPSTracker extends Service implements LocationListener {
         getLocation();
     }
 
+    /**
+     * Method used to get the users location in a Location object.
+     *
+     * @return the users location
+     */
     public Location getLocation() {
         try {
-            locationManager = (LocationManager)context.getSystemService(LOCATION_SERVICE);
-            isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-            isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
+            boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            boolean isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
             if (!isGPSEnabled && !isNetworkEnabled) {
-
+                //Assume the user knows the app is worthless without these and is just preparing message and contacts.
             } else {
                 this.canGetLocation = true;
-
-                if(isNetworkEnabled) {
+                //Attempt to get the users location using the web
+                if (isNetworkEnabled) {
                     try {
                         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-
 
                         if (locationManager != null) {
                             location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
@@ -60,16 +61,16 @@ public class GPSTracker extends Service implements LocationListener {
                         e.printStackTrace();
                     }
                 }
-
-                if(isGPSEnabled) {
-                    if(location == null) {
+                //Attempt to get the users location using GPS
+                if (isGPSEnabled) {
+                    if (location == null) {
                         try {
                             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
 
-                            if(locationManager != null) {
+                            if (locationManager != null) {
                                 location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-                                if(location != null) {
+                                if (location != null) {
                                     latitude = location.getLatitude();
                                     longitude = location.getLongitude();
                                 }
@@ -83,12 +84,14 @@ public class GPSTracker extends Service implements LocationListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return location;
     }
 
+    /**
+     * Method that turn off the GPS to save data.
+     */
     public void stopUsingGPS() {
-        if(locationManager != null) {
+        if (locationManager != null) {
             try {
                 locationManager.removeUpdates(GPSTracker.this);
             } catch (SecurityException e) {
@@ -97,44 +100,74 @@ public class GPSTracker extends Service implements LocationListener {
         }
     }
 
+    /**
+     * Method to get latitude
+     *
+     * @return users latitude
+     */
     public double getLatitude() {
-        if(location != null) {
+        if (location != null) {
             latitude = location.getLatitude();
         }
         return latitude;
     }
 
+    /**
+     * Method to get latitude
+     *
+     * @return users latitude
+     */
     public double getLongitude() {
-        if(location != null) {
+        if (location != null) {
             longitude = location.getLongitude();
         }
         return longitude;
     }
 
+    /**
+     * Method to check if we can get the users location
+     *
+     * @return true if we can get the users location
+     */
     public boolean canGetLocation() {
         return this.canGetLocation;
     }
 
+    /**
+     * Unused inherited method
+     */
     @Override
     public void onLocationChanged(Location location) {
 
     }
 
+    /**
+     * Unused inherited method
+     */
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
 
     }
 
+    /**
+     * Unused inherited method
+     */
     @Override
     public void onProviderEnabled(String provider) {
 
     }
 
+    /**
+     * Unused inherited method
+     */
     @Override
     public void onProviderDisabled(String provider) {
 
     }
 
+    /**
+     * Unused inherited method
+     */
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {

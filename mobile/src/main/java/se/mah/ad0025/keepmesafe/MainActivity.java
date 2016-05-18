@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity
     private NavigationView navigationView;
     private FragmentManager fm;
     private SharedPreferences prefs;
-    private ArrayList<Contact> contacts = new ArrayList<>();    //Används för att lagra alla kontakter man har sparat i appen.
+    private ArrayList<Contact> contacts = new ArrayList<>();
     private DBController dbController;
     private MainFragment mainFragment;
     private AddContactFragment addContactFragment;
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        prefs = getSharedPreferences("KeepMeSafePrefs", MODE_PRIVATE);
+        prefs = getSharedPreferences(getString(R.string.prefs), MODE_PRIVATE);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         gps = new GPSTracker(MainActivity.this);
 

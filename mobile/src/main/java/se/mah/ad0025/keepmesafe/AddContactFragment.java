@@ -44,9 +44,8 @@ public class AddContactFragment extends Fragment {
             addContactListener = (AddContactListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement AddContactListener");
+                    + activity.getString(R.string.implementAddContactListener));
         }
-
     }
 
     public AddContactFragment() {
@@ -83,7 +82,7 @@ public class AddContactFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (et_contactName.getText().toString().trim().length() == 0 || et_contactNumber.getText().toString().trim().length() == 0) {
-                    Snackbar.make(v, "Please enter name and number", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                    Snackbar.make(v, R.string.nameAndNbrPrompt, Snackbar.LENGTH_LONG).setAction(R.string.Action, null).show();
                 } else {
                     addContactListener.onAddContactBtnClicked(et_contactName.getText().toString().trim(), et_contactNumber.getText().toString().replace(" ", "").replace("-", ""));
                 }
@@ -92,6 +91,9 @@ public class AddContactFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Overridden onResume. This is necessary to populate the edit text properly.
+     */
     @Override
     public void onResume() {
         et_contactName.setText(name);
@@ -99,6 +101,12 @@ public class AddContactFragment extends Fragment {
         super.onResume();
     }
 
+    /**
+     * Method used to store the information gathered from the contacts in the users phone so they can be placed in text fields.
+     *
+     * @param name   name of the contact
+     * @param number number of the contact
+     */
     public void setNameAndNumber(String name, String number) {
         this.name = name;
         this.number = number;
