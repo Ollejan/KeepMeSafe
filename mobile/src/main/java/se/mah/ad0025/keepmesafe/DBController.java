@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 /**
  * Controller-class for the database to store contacts.
  */
-public class DBController extends SQLiteOpenHelper {
+class DBController extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "contactDB";
     private static final int DB_VERSION = 1;

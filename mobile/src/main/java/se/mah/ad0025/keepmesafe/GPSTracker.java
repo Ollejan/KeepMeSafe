@@ -1,5 +1,6 @@
 package se.mah.ad0025.keepmesafe;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.support.annotation.Nullable;
 /**
  * Class used to fetch the users coordinates.
  */
+@SuppressLint("Registered")
 public class GPSTracker extends Service implements LocationListener {
 
     private final Context context;
@@ -22,7 +24,7 @@ public class GPSTracker extends Service implements LocationListener {
     private double longitude;
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
     private static final long MIN_TIME_BW_UPDATES = 1000 * 60;
-    protected LocationManager locationManager;
+    private LocationManager locationManager;
 
     public GPSTracker(Context context) {
         this.context = context;
@@ -32,9 +34,8 @@ public class GPSTracker extends Service implements LocationListener {
     /**
      * Method used to get the users location in a Location object.
      *
-     * @return the users location
      */
-    public Location getLocation() {
+    private void getLocation() {
         try {
             locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
             boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
@@ -84,7 +85,6 @@ public class GPSTracker extends Service implements LocationListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return location;
     }
 
     /**

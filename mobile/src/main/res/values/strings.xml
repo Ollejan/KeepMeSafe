@@ -2,7 +2,6 @@
     <string name="app_name">KeepMeSafe</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="action_settings">Settings</string>
     <string name="Title">KeepMeSafe</string>
     <string name="iconDesc">Icon of application</string>
@@ -66,5 +65,7 @@
     <string name="prefs">KeepMeSafePrefs</string>
     <string name="implementMainFragmentListener">" must implement OnHelpClickedListener"</string>
     <string name="implementManageContactsListener">" must implement ManageContactsListener"</string>
+    <string name="MainPage">MainPage</string>
+    <string name="databaseError">Error in database, please make an error report</string>
 
 </resources>

@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">KeepMeSafe</string>
-    <string name="hello_world">Hello World!</string>
     <string name="messagesSent">Messages sent</string>
     <string name="HelpCaps">HELP</string>
 </resources>

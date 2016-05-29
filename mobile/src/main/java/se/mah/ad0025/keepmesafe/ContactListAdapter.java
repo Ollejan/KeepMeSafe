@@ -12,7 +12,7 @@ import java.util.ArrayList;
 /**
  * Adapter for the list of contacts.
  */
-public class ContactListAdapter extends ArrayAdapter<Contact> {
+class ContactListAdapter extends ArrayAdapter<Contact> {
     private ArrayList<Contact> contacts = new ArrayList<>();
 
     /**

@@ -3,6 +3,11 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_Main"
+            android:icon="@android:drawable/btn_default"
+            android:title="@string/MainPage" />
+
+        <item
             android:id="@+id/nav_Manage"
             android:icon="@android:drawable/ic_menu_manage"
             android:title="@string/manageContacts" />

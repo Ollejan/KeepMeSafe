@@ -16,7 +16,7 @@ public class DataLayerListenerService extends WearableListenerService {
 
     private GPSTracker gps;
     private SharedPreferences prefs;
-    private ArrayList<Contact> contacts = new ArrayList<>();
+    private final ArrayList<Contact> contacts = new ArrayList<>();
     private DBController dbController;
 
     /**

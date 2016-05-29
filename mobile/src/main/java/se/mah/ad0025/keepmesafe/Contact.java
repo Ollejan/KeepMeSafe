@@ -3,10 +3,11 @@ package se.mah.ad0025.keepmesafe;
 /**
  * A data structure representing a telephone contact.
  */
-public class Contact {
+class Contact {
     //Id auto generated in database.
     private int ID;
-    private String name, number;
+    private String name;
+    private String number;
 
     /**
      * To create a contact we require a name and a number
@@ -55,12 +56,4 @@ public class Contact {
         this.ID = ID;
     }
 
-    /**
-     * Method used when the name of the contact is being edited
-     *
-     * @param name the new name of the contact
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
 }
